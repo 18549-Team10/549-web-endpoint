@@ -13,6 +13,7 @@
     "morgan": "~1.7.0",
     "pug": "~2.0.0-beta10",
     "serve-favicon": "~2.3.2",
-    "jimp": "~0.2.27"
+    "jimp": "~0.2.27",
+    "python-shell": "~0.4.0"
   }
 }

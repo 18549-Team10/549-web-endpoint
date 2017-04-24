@@ -2,6 +2,7 @@ const dgram = require('dgram');
 const server = dgram.createSocket('udp4');
 const fs  = require('fs');
 const path  = require('path');
+const PythonShell = require('python-shell');
 
 const appRoot = process.cwd();
 const dataDirectory = appRoot + path.sep + 'data';
@@ -9,6 +10,23 @@ const dataFilename = 'output';
 const dataPath = dataDirectory + path.sep + dataFilename;
 const dataBytes = 4;
 const dataOutputBase = 16;
+
+const headerSize = 8;
+const frequencyIndex = 0;
+const chunkIndex = 1;
+const lastChunk = 3;
+const lastFrequency = 6000;
+
+var options = {
+  mode: 'text',
+  scriptPath: appRoot + '/scripts/'
+};
+
+PythonShell.run('entry.py', options, function (err, results) {
+  if (err) throw err;
+  // results is an array consisting of messages collected during execution
+  console.log('results: %j', results);
+});
 
 function convertData(data){
   return ((data >> 2) && 0xFFF);
@@ -20,13 +38,17 @@ server.on('error', (err) => {
 });
 
 server.on('message', (msg, rinfo) => {
-  firstTen = msg.slice(0,11).toString('hex');
-  var firstData = (msg.readUIntLE(0, dataBytes));
+  var firstData = (msg.readUIntLE(headerSize, dataBytes));
   var firstHexData = firstData.toString(dataOutputBase);
   var firstFloat = convertData(firstData) * 1.4 / 4096;
   console.log(`server got: ${firstData} (${firstHexData}) = ${firstFloat} from ${rinfo.address}:${rinfo.port}`);
+
+  var frequency = (msg.readUIntLE(frequencyIndex, dataBytes));
+  var chunk = (msg.readUIntLE(chunkIndex * dataBytes, dataBytes));
+
+  console.log(`server got: ${firstHexData} = ${firstFloat} from ${rinfo.address}:${rinfo.port} for ${frequency}:${chunk}`);
   var data = []
-  for(var i = 0; i < msg.length; i+=dataBytes){
+  for(var i = headerSize; i < msg.length; i+=dataBytes){
     data.push(msg.readUIntLE(i, dataBytes),
                   "\n");
   }
@@ -35,11 +57,18 @@ server.on('message', (msg, rinfo) => {
         fs.mkdirSync(dataDirectory);
   }
 
-  fs.appendFile(dataPath, data.join(""), function(err) {
+  fs.appendFile(dataPath+("0" + frequency).slice(-5), data.join(""), function(err) {
     if(err) {
       return console.log(err);
     }
     console.log("The file was saved!");
+    if(chunk == lastChunk && frequency == lastFrequency){
+      PythonShell.run('entry.py', options, function (err, results) {
+        if (err) throw err;
+        // results is an array consisting of messages collected during execution
+        console.log('results: %j', results);
+      });
+    }
   });
 });
 
