@@ -1,7 +1,12 @@
 extends layout
 
 block content
+  script(src="")
+  var fs = require('fs');
+var parse = require('csv-parse');
+var async = require('async');
   h1= title
   p #{recentFreq}%
   div(style={opacity : lastData})
     img(src='/modified-keg.png')
+  script(src="/script.js")
