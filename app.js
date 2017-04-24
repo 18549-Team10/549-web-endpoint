@@ -19,7 +19,8 @@ const lastFrequency = 6000;
 
 var options = {
   mode: 'text',
-  scriptPath: appRoot + '/scripts/'
+  scriptPath: appRoot + '/scripts/',
+  args: [dataDirectory]
 };
 
 PythonShell.run('entry.py', options, function (err, results) {
