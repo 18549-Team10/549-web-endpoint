@@ -8,7 +8,10 @@ server.on('error', (err) => {
 
 server.on('message', (msg, rinfo) => {
   firstTen = msg.slice(0,11).toString('hex');
-  console.log(`server got: ${firstTen} from ${rinfo.address}:${rinfo.port}`);
+  var firstData = msg.readUIntLE(0, 4);
+  var firstHexData = firstData.toString(16);
+  var firstFloat = ((firstData >> 2) & 0xFFF) * 1.4 / 4096;
+  console.log(`server got: ${firstData} (${firstHexData}) = ${firstFloat} from ${rinfo.address}:${rinfo.port}`);
 });
 
 server.on('listening', () => {
