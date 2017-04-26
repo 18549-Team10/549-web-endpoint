@@ -17,7 +17,7 @@ def visualizeFreq(sampleData, dataLabels):
     plt.title('Frequency reponse')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    plt.show()
+    plt.savefig("freq_response.png")
 
 def visualizeTimeOrderedData(sampleData, dataLabels):
     handles = []
@@ -31,7 +31,7 @@ def visualizeTimeOrderedData(sampleData, dataLabels):
     plt.title('Time ordered piezo data')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    plt.show()
+    plt.savefig("time_ordered_data.png")
 
 
 def getDataAndVisualize(dataDir = "../data"):
