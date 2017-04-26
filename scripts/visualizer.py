@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualizeFreq(sampleData, dataLabels):
+def visualizeFreq(sampleData, dataLabels, graphDir):
     handles = []
     freq_responses = []
     for data in sampleData:
@@ -19,9 +19,9 @@ def visualizeFreq(sampleData, dataLabels):
     plt.title('Frequency reponse')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    plt.savefig("freq_response.png")
+    plt.savefig(graphDir + os.path.sep + "freq_response.png")
 
-def visualizeTimeOrderedData(sampleData, dataLabels):
+def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
     handles = []
     for data in sampleData:
         n = len(data)
@@ -33,10 +33,10 @@ def visualizeTimeOrderedData(sampleData, dataLabels):
     plt.title('Time ordered piezo data')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    plt.savefig("time_ordered_data.png")
+    plt.savefig(graphDir + os.path.sep + "time_ordered_data.png")
 
 
-def getDataAndVisualize(dataDir = "../data"):
+def getDataAndVisualize(dataDir = "../data", graphDir = "../graphs"):
     print("starting up...")
     dataFiles = []
     if os.path.isdir(dataDir):
@@ -51,8 +51,10 @@ def getDataAndVisualize(dataDir = "../data"):
         print len(nextHead), len(head)
     voltageData = map(lambda y : map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, y), head)
     print("visualizing..")
-    visualizeTimeOrderedData(voltageData, dataLabels)
-    visualizeFreq(voltageData, dataLabels)
+    if not os.path.isdir(graphDir):
+        os.mkdir(graphDir)
+    visualizeTimeOrderedData(voltageData, dataLabels, graphDir)
+    visualizeFreq(voltageData, dataLabels, graphDir)
     print("done!")
 
 getDataAndVisualize()

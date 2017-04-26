@@ -42,8 +42,6 @@ server.on('message', (msg, rinfo) => {
   var firstData = (msg.readUIntLE(headerSize, dataBytes));
   var firstHexData = firstData.toString(dataOutputBase);
   var firstFloat = convertData(firstData) * 1.4 / 4096;
-  console.log(`server got: ${firstData} (${firstHexData}) = ${firstFloat} from ${rinfo.address}:${rinfo.port}`);
-
   var frequency = (msg.readUIntLE(frequencyIndex, dataBytes));
   var chunk = (msg.readUIntLE(chunkIndex * dataBytes, dataBytes));
 
@@ -68,6 +66,7 @@ server.on('message', (msg, rinfo) => {
         if (err) throw err;
         // results is an array consisting of messages collected during execution
         console.log('results: %j', results);
+
       });
     }
   });
