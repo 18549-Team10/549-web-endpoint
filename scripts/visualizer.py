@@ -8,6 +8,8 @@ import numpy as np
 def visualizeFreq(sampleData, dataLabels, graphDir):
     handles = []
     freq_responses = []
+    #clear any data off graph
+    plt.clf()
     for data in sampleData:
         n = len(data)
         frq = range(n)
@@ -23,6 +25,8 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
 
 def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
     handles = []
+    #clear any data off graph
+    plt.clf()
     for data in sampleData:
         n = len(data)
         frq = range(n)
@@ -37,24 +41,35 @@ def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
 
 
 def getDataAndVisualize(dataDir = "../data", graphDir = "../graphs"):
-    print("starting up...")
+    print("starting up pulling from " + dataDir)
     dataFiles = []
     if os.path.isdir(dataDir):
         dataFiles.extend(os.listdir(dataDir))
+    print(dataFiles)
     head = []
     dataLabels = []
     for fname in dataFiles:
         dataLabels.append(fname)
-        with open(dataDir + os.path.sep + fname) as myfile:
-            nextHead = myfile.read().splitlines()
-        head.append(nextHead)
+        nextHead = []
+        if os.path.isfile(dataDir + os.path.sep + fname):
+            with open(dataDir + os.path.sep + fname) as myfile:
+                nextHead = myfile.read().splitlines()
+            head.append(nextHead)
         print len(nextHead), len(head)
     voltageData = map(lambda y : map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, y), head)
-    print("visualizing..")
+    print("visualizing in " + graphDir)
     if not os.path.isdir(graphDir):
         os.mkdir(graphDir)
     visualizeTimeOrderedData(voltageData, dataLabels, graphDir)
     visualizeFreq(voltageData, dataLabels, graphDir)
     print("done!")
 
-getDataAndVisualize()
+if len(sys.argv) > 1:
+    print(sys.argv)
+    scriptPath = sys.argv[0]
+    extension = sys.argv[1]
+    dataDir = os.path.dirname(scriptPath) + os.path.sep + "../data" + os.path.sep + extension
+    graphDir = os.path.dirname(scriptPath) + os.path.sep + "../graphs" + os.path.sep + extension
+    getDataAndVisualize(dataDir, graphDir)
+else:
+    getDataAndVisualize()
