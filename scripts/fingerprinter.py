@@ -37,20 +37,14 @@ def weightedAvg(l):
     totalWeight = sum(map(lambda (x,y) : y, l)) * len(l)
     return sum(map(lambda (x,y) : x*y, l)) / totalWeight
 
-def condensePeaks(peaks, numPeaks):
-    print("condensing!")
+def condensePeaks(peaks):
 
     dists = []
     for i in range(1, len(peaks)):
         dist = abs(peaks[i][0] - peaks[i - 1][0])
         dists.append((dist,i))
-    print dists
 
-    print(len(peaks))
-
-    indicesToSplit = sorted([i for (dist,i) in sorted(dists)[len(dists) - numPeaks + 1:]])
-    print (indicesToSplit, map(lambda i : 1.0*i*SAMPLING_RATE/len(peaks), indicesToSplit))
-
+    indicesToSplit = sorted([i for (dist,i) in sorted(dists)[len(dists) - NUM_PEAKS + 1:]])
 
     groups = []
     j  = 0
@@ -59,7 +53,6 @@ def condensePeaks(peaks, numPeaks):
         peaks = peaks[i-j:]
         j = i
     groups.append(peaks)
-    print(peaks)
     # print groups
     output = []
     maxMag = None
@@ -82,14 +75,12 @@ def convertToDict(folderName):
     frq = [1.0 * i * SAMPLING_RATE / (n/2) for i in range(n/2)]
     freqResponse = np.fft.fft(data) # [range(n/2)]
     freqResponseCut = freqResponse[:len(freqResponse)/2]
-    assert(len(frq) == len(freqResponseCut))
     freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2)))] # this is mostly noise
     peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
-    print(list(reversed([(f,m) for (m,f) in sorted(peaks)[n/2 - n/40:]]))[:50])
 
     # return [(f,m) for (m,f) in sorted(peaks)[len(peaks) - NUM_PEAKS - 1:]]
 
-    return condensePeaks(sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - 100:]]), NUM_PEAKS)
+    return condensePeaks(sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - 100:]]))
 
 def writeFingerprints(trainingData):
     stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])

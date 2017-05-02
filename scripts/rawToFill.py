@@ -35,12 +35,10 @@ def rawToFill(amplitudeDataSets):
     frq = [1.0 * i * fp.SAMPLING_RATE / (n/2) for i in range(n/2)]
     freqResponse = np.fft.fft(allData) # [range(n/2)]
     freqResponseCut = freqResponse[:len(freqResponse)/2]
-    assert(len(frq) == len(freqResponseCut))
-    freqResponseCut[:int(1.0*fp.HIGHPASS_FREQ/fp.SAMPLING_RATE*(n/2))] = [0 for i in range(int(1.0*fp.HIGHPASS_FREQ/fp.SAMPLING_RATE*(n/2)))] # this is mostly noise
+    # freqResponseCut[:int(1.0*fp.HIGHPASS_FREQ/fp.SAMPLING_RATE*(n/2))] = [0 for i in range(int(1.0*fp.HIGHPASS_FREQ/fp.SAMPLING_RATE*(n/2)))] # this is mostly noise
     peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
-    print(list(reversed([(f,m) for (m,f) in sorted(peaks)[n/2 - n/40:]]))[:50])
-    
-    fill = classifySample.classify(fp.condensePeaks(sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - 100:]]), fp.NUM_PEAKS), fingerprints)
+    condensedPeaks = fp.condensePeaks(sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - 100:]]))
+    fill = classifySample.classify(condensedPeaks, fingerprints)
 
     writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
 
