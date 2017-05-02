@@ -1,19 +1,26 @@
 {
   "name": "549-web-endpoint",
   "version": "0.0.0",
+  "description": "StreamFi Web Interface",
   "private": true,
   "scripts": {
     "start": "node app.js"
   },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/18549-Team10/549-webapp/issues"
+  },
+  "homepage": "https://github.com/18549-Team10/549-webapp#readme",
   "dependencies": {
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
-    "express": "~4.14.1",
+    "express": "~4.15.2",
     "morgan": "~1.7.0",
     "pug": "~2.0.0-beta10",
     "serve-favicon": "~2.3.2",
     "jimp": "~0.2.27",
-    "python-shell": "~0.4.0"
+    "python-shell": "~0.4.0",
+    "express-handlebars": "^3.0.0"
   }
 }

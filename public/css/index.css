@@ -1,0 +1,53 @@
+/* BACKGROUND COLOR FOR PAGE */
+#background {
+	background-color: #efefef;
+	margin: 0;
+}
+
+/* STYLING FOR LEFT NAVIGATION BAR */
+#left-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 15%;
+    background-color: #333;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+#left-nav li a {
+    display: block;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    text-align: center;
+    font-family: "Open Sans";
+}
+
+#left-nav li a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#left-nav li a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+}
+
+/* STYLING FOR MAIN CONTENT */
+#content {
+	margin-left: 50%;
+	padding: 1px 16px;
+	height: 1000px;
+}
+
+#content h2 {
+	font-family: "Open Sans";
+}
+
+#json-data {
+	font-family: "Open Sans";
+	font-size: 12px;
+	background: green;
+}
