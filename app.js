@@ -27,6 +27,8 @@ var options = {
 };
 
 function processPythonRun (fillLevel, err, results) {
+  if(os.platform() == 'win32')
+    return;
   if (err) throw err;
   // results is an array consisting of messages collected during execution
   console.log('results: %j', results);
@@ -37,7 +39,6 @@ function processPythonRun (fillLevel, err, results) {
     }
   });
 }
-
 
 PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
 
