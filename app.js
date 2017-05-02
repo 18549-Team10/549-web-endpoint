@@ -4,6 +4,7 @@ const fs  = require('fs');
 const path  = require('path');
 const PythonShell = require('python-shell');
 const spawn = require('child_process').spawn;
+const os = require("os");
 
 const appRoot = process.cwd();
 const dataDirectory = appRoot + path.sep + 'data';
@@ -27,8 +28,8 @@ var options = {
 };
 
 function processPythonRun (fillLevel, err, results) {
-  if(os.platform() == 'win32')
-    return;
+  console.log('hi');
+  if(os.platform() == 'win32') return;
   if (err) throw err;
   // results is an array consisting of messages collected during execution
   console.log('results: %j', results);
