@@ -14,13 +14,14 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
     samplingRate = 62500 # 62.5 kHz
     for data in sampleData:
         n = len(data)
-        print n, type(data), data[0]
-        frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
-        freq_response = np.fft.fft(data) # len [range(n/2)]
-        freq_response = freq_response[:len(freq_response) / 2]
-        handle, = plt.plot(frq, abs(freq_response))
-        handles.append(handle)
-    
+        if n > 0:
+            print n, type(data), data[0]
+            frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
+            freq_response = np.fft.fft(data) # len [range(n/2)]
+            freq_response = freq_response[:len(freq_response) / 2]
+            handle, = plt.plot(frq, abs(freq_response))
+            handles.append(handle)
+
     plt.xlabel('Freq')
     plt.ylabel('|Y(freq)|')
     plt.title('Frequency reponse')
@@ -55,16 +56,20 @@ def getDataAndVisualize(dataDir = "../data/", graphDir = "../graphs"):
     print(dataFiles)
     dataLabels = []
     data = []
-    for directory in dataFiles:
-        dataLabels.append(directory)
-        head = []
-        for fname in os.listdir(dataDir + os.path.sep + directory):
-            if os.path.isfile(dataDir + os.path.sep + directory + os.path.sep + fname):
-                with open(dataDir + os.path.sep + directory + os.path.sep + fname) as myfile:
+    head = []
+
+    #One directory at a time
+    for fname in dataFiles:
+        if os.path.isfile(dataDir + os.path.sep + fname):
+            base, ext = os.path.splitext(fname)
+            nextHead =[]
+            if ext == "" or ext == "txt":
+                with open(dataDir + os.path.sep + fname) as myfile:
                     nextHead = myfile.read().splitlines()
-                head.extend(nextHead)
-        voltageData = map(lambda y : map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, y), head)
-        data.append(voltageData)
+            head.extend(nextHead)
+    voltageData = map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, head)
+    data.append(voltageData)
+
     print("visualizing in " + graphDir)
     if not os.path.isdir(graphDir):
         os.mkdir(graphDir)
