@@ -16,23 +16,26 @@ def bestMatch(freq, mag, mapPeaks):
             bestFreq, bestMag = mapFreq, mapMag
     return bestFreq, bestMag
 
-def score(samplePeaks, mapPeaks, ratio):
+def score(samplePeaks, mapPeaks, ratio, debug):
     # currently, only adds to score based on closeness of frequencies, but can
     # be modified to score based on similarity of magnitude as wells
-    totalScore = 0.0
+    peakScores = []
     for (freq,mag) in samplePeaks:
         matchFreq,matchMag = bestMatch(freq,mag, mapPeaks)
         freqDiff = abs(freq - matchFreq)
         magDiff = abs(mag - matchMag)
-        totalScore += freqDiff*ratio + magDiff
-    return totalScore / len(samplePeaks)
+        if debug: print freqDiff, magDiff
+        peakScores.append(freqDiff)
+    peakScores.pop(peakScores.index(max(peakScores))) # .28, .48 with this line, .23, .48 without
+    return sum(peakScores) / len(samplePeaks)
 
-def classify(samplePeaks, trainingDataMap, ratio = 0.01):
+def classify(samplePeaks, trainingDataMap, ratio = 1.0, debug = False):
+    if debug: print samplePeaks
     bestScore = None
     bestMatch = []
     for fillLevel in trainingDataMap.keys():
-        currScore = score(samplePeaks, trainingDataMap[fillLevel], ratio)
-        print fillLevel, currScore
+        currScore = score(samplePeaks, trainingDataMap[fillLevel], ratio, debug)
+        if debug: print fillLevel, currScore
         if bestScore == None or currScore < bestScore:
             bestScore = currScore
             bestMatch = [fillLevel]

@@ -4,6 +4,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import fingerprinter as fp
 
 def visualizeFreq(sampleData, dataLabels, graphDir):
     handles = []
@@ -11,24 +12,22 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
     #clear any data off graph
     plt.clf()
     samplingRate = 62500 # 62.5 kHz
-    data = []
-    for d in sampleData: data.extend(d)
-    # for data in sampleData:
-    n = len(data)
-    frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
-    freq_response = (np.fft.fft(data)) #len [range(n/2)]
-    freq_response[0] = 0
-    freq_response = freq_response[:len(freq_response) / 2]
-    handle, = plt.plot(frq, abs(freq_response))
-    handles.append(handle)
+    for data in sampleData:
+        n = len(data)
+        print n, type(data), data[0]
+        frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
+        freq_response = np.fft.fft(data) # len [range(n/2)]
+        freq_response = freq_response[:len(freq_response) / 2]
+        handle, = plt.plot(frq, abs(freq_response))
+        handles.append(handle)
     
     plt.xlabel('Freq')
     plt.ylabel('|Y(freq)|')
     plt.title('Frequency reponse')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    # plt.show()
-    plt.savefig(graphDir + os.path.sep + "freq_response.png")
+    plt.show()
+    # plt.savefig(graphDir + os.path.sep + "freq_response.png")
 
 def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
     handles = []
@@ -44,33 +43,53 @@ def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
     plt.title('Time ordered piezo data')
     plt.legend(handles, dataLabels)
     plt.grid(True)
-    # plt.show()
-    plt.savefig(graphDir + os.path.sep + "time_ordered_data.png")
+    plt.show()
+    # plt.savefig(graphDir + os.path.sep + "time_ordered_data.png")
 
 
-def getDataAndVisualize(dataDir = "../data/FULL", graphDir = "../graphs"):
+def getDataAndVisualize(dataDir = "../data/", graphDir = "../graphs"):
     print("starting up pulling from " + dataDir)
     dataFiles = []
     if os.path.isdir(dataDir):
         dataFiles.extend(os.listdir(dataDir))
     print(dataFiles)
-    head = []
     dataLabels = []
-    for fname in dataFiles:
-        dataLabels.append(fname)
-        nextHead = []
-        if os.path.isfile(dataDir + os.path.sep + fname):
-            with open(dataDir + os.path.sep + fname) as myfile:
-                nextHead = myfile.read().splitlines()
-            head.append(nextHead)
-        print len(nextHead), len(head)
-    voltageData = map(lambda y : map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, y), head)
+    data = []
+    for directory in dataFiles:
+        dataLabels.append(directory)
+        head = []
+        for fname in os.listdir(dataDir + os.path.sep + directory):
+            if os.path.isfile(dataDir + os.path.sep + directory + os.path.sep + fname):
+                with open(dataDir + os.path.sep + directory + os.path.sep + fname) as myfile:
+                    nextHead = myfile.read().splitlines()
+                head.extend(nextHead)
+        voltageData = map(lambda y : map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, y), head)
+        data.append(voltageData)
     print("visualizing in " + graphDir)
     if not os.path.isdir(graphDir):
         os.mkdir(graphDir)
-    visualizeTimeOrderedData(voltageData, dataLabels, graphDir)
-    visualizeFreq(voltageData, dataLabels, graphDir)
+    # visualizeTimeOrderedData(data, dataLabels, graphDir)
+    visualizeFreq(data, dataLabels, graphDir)
     print("done!")
+
+def fingerprintVisualize():
+    plt.clf()
+    fingerprints = fp.readFingerprints()
+    dataLabels = []
+    handles = []
+    for fingerprint in fingerprints:
+        x = [f for (f,m) in fingerprints[fingerprint]]
+        y = [m for (f,m) in fingerprints[fingerprint]]
+        handle, = plt.plot(x,y)
+        handles.append(handle)
+        dataLabels.append(fingerprint)
+    plt.xlabel('Freq')
+    plt.ylabel('|Y(Freq)|')
+    plt.title('Fingerprints')
+    plt.legend(handles, dataLabels)
+    plt.grid(True)
+    plt.show()
+
 
 if len(sys.argv) > 1:
     print(sys.argv)
@@ -80,4 +99,5 @@ if len(sys.argv) > 1:
     graphDir = os.path.dirname(scriptPath) + os.path.sep + "../graphs" + os.path.sep + extension
     getDataAndVisualize(dataDir, graphDir)
 else:
-    getDataAndVisualize()
+    # getDataAndVisualize()
+    fingerprintVisualize()

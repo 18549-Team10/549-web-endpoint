@@ -7,7 +7,7 @@ import copy
 FINGERPRINT_FILE_PATH = "../fingerprintData/fingerprints.csv"
 
 HIGHPASS_FREQ = 1000 # Hz
-NUM_PEAKS = 4
+NUM_PEAKS = 2
 SAMPLING_RATE = 62500 # 62.5 kHz
 
 def readFile(path):
