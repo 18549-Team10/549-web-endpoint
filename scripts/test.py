@@ -14,8 +14,8 @@ def test(trials = 100, debug = False):
     count   = 0
     guesses = {}
     oldData = None
-    sampleSize = 10000
-    fillLevels = rawToFill.FILL_PERCENTAGES.keys()
+    sampleSize = 1000
+    fillLevels = [f for (p,f) in sorted([(p,f) for (f,p) in rawToFill.FILL_PERCENTAGES.items()])]
     for trial in range(trials):
         fillLevel = random.choice(fillLevels)
         if debug: print "\nAnswer:", fillLevel
@@ -35,5 +35,5 @@ def test(trials = 100, debug = False):
         if abs(fillLevels.index(guess) - fillLevels.index(fillLevel)) <= 1:
             close += 1
         oldData = data
-    if debug: print guesses
+    print guesses
     return 1.0 * correct / trials, 1.0 * close / trials
