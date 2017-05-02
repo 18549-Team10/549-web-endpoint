@@ -182,7 +182,7 @@
                                 <p class="category">Last Measurement</p>
                             </div>
                             <div class="content">
-                            	<div>All containers at 100%</div>
+                            	<div id="json-data"></div>
                                 <div class="footer">
                                     <hr>
                                     <div class="stats">
@@ -301,19 +301,27 @@
 
 	<script type="text/javascript">
     	$(document).ready(function(){
+            var myList;
+            getJSONFile();
+        });
 
-        	demo.initChartist();
-
-        	$.notify({
-            	icon: 'pe-7s-gift',
-            	message: "Welcome to <b>StreamFi</b> Dashboard"
-
-            },{
-                type: 'info',
-                timer: 4000
+        function getJSONFile() {
+            $.getJSON('/json/currentFill.json').done(function (data) {
+                myList = data;
+                var jsonData = document.getElementById("json-data");
+                console.log(jsonData);
+                jsonData.innerHTML += "Container ID = ";
+                console.log(jsonData);
+                jsonData.innerHTML += data.containerID;
+                jsonData.innerHTML += "<br>";
+                jsonData.innerHTML += "Fill Level =";
+                jsonData.innerHTML += data.fillLevel;
+                jsonData.innerHTML += "<br>";
+                console.log(data);
             });
-    	});
-	</script>
+
+        }
+    </script>
 
 <!--<head>
 	<title>StreamFi | Home</title>
