@@ -10,17 +10,24 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
     freq_responses = []
     #clear any data off graph
     plt.clf()
-    for data in sampleData:
-        n = len(data)
-        frq = range(n)
-        freq_response = (np.fft.fft(data)/n)#[range(n/2)]
-        handle, = plt.plot(frq, abs(freq_response))
-        handles.append(handle)
+    samplingRate = 62500 # 62.5 kHz
+    data = []
+    for d in sampleData: data.extend(d)
+    # for data in sampleData:
+    n = len(data)
+    frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
+    freq_response = (np.fft.fft(data)) #len [range(n/2)]
+    freq_response[0] = 0
+    freq_response = freq_response[:len(freq_response) / 2]
+    handle, = plt.plot(frq, abs(freq_response))
+    handles.append(handle)
+    
     plt.xlabel('Freq')
     plt.ylabel('|Y(freq)|')
     plt.title('Frequency reponse')
     plt.legend(handles, dataLabels)
     plt.grid(True)
+    # plt.show()
     plt.savefig(graphDir + os.path.sep + "freq_response.png")
 
 def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
@@ -37,10 +44,11 @@ def visualizeTimeOrderedData(sampleData, dataLabels, graphDir):
     plt.title('Time ordered piezo data')
     plt.legend(handles, dataLabels)
     plt.grid(True)
+    # plt.show()
     plt.savefig(graphDir + os.path.sep + "time_ordered_data.png")
 
 
-def getDataAndVisualize(dataDir = "../data", graphDir = "../graphs"):
+def getDataAndVisualize(dataDir = "../data/FULL", graphDir = "../graphs"):
     print("starting up pulling from " + dataDir)
     dataFiles = []
     if os.path.isdir(dataDir):
