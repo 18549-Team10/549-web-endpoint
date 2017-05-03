@@ -53,3 +53,5 @@ def classify(samplePeaks, trainingDataMap, ratio = 1.0, debug = False):
         elif currScore == bestScore:
             bestMatch.append(fillLevel)
     return bestMatch
+
+# Add in a call to classify that can happen when a page loads
