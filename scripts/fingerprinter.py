@@ -37,11 +37,18 @@ def weightedAvg(l):
     totalWeight = sum(map(lambda (x,y) : y, l)) * len(l)
     return sum(map(lambda (x,y) : x*y, l)) / totalWeight
 
-def condensePeaks(peaks):
+def condenseData(data):
+    n = len(data)
+    frq = [1.0 * i * SAMPLING_RATE / (n/2) for i in range(n/2)]
+    freqResponse = np.fft.fft(data) # [range(n/2)]
+    freqResponseCut = freqResponse[:len(freqResponse)/2]
+    freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2)))] # this is mostly noise
+    peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
+    topPeaks = sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - n/500:]])
 
     dists = []
-    for i in range(1, len(peaks)):
-        dist = abs(peaks[i][0] - peaks[i - 1][0])
+    for i in range(1, len(topPeaks)):
+        dist = abs(topPeaks[i][0] - topPeaks[i - 1][0])
         dists.append((dist,i))
 
     indicesToSplit = sorted([i for (dist,i) in sorted(dists)[len(dists) - NUM_PEAKS + 1:]])
@@ -49,10 +56,10 @@ def condensePeaks(peaks):
     groups = []
     j  = 0
     for i in indicesToSplit:
-        groups.append(peaks[:i-j])
-        peaks = peaks[i-j:]
+        groups.append(topPeaks[:i-j])
+        topPeaks = topPeaks[i-j:]
         j = i
-    groups.append(peaks)
+    groups.append(topPeaks)
     # print groups
     output = []
     maxMag = None
@@ -70,17 +77,9 @@ def convertToDict(folderName):
         for row in dataString.splitlines():
             if row.isdigit():
                 data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
-
-    n = len(data)
-    frq = [1.0 * i * SAMPLING_RATE / (n/2) for i in range(n/2)]
-    freqResponse = np.fft.fft(data) # [range(n/2)]
-    freqResponseCut = freqResponse[:len(freqResponse)/2]
-    freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(n/2)))] # this is mostly noise
-    peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
-
     # return [(f,m) for (m,f) in sorted(peaks)[len(peaks) - NUM_PEAKS - 1:]]
 
-    return condensePeaks(sorted([(f,m) for (m,f) in sorted(peaks)[n/2 - 100:]]))
+    return condenseData(data)
 
 def writeFingerprints(trainingData):
     stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])

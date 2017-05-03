@@ -3,6 +3,8 @@
 # given: single sample's peaks from container with unknown amount of liquid, map created from training data
 # goal: classify sample with best guess of amount of liquid in container
 
+import math
+
 def bestMatch(freq, mag, mapPeaks):
     # currently, matches only based on frequencies, but can be changed to 
     # match based on magnitude as well
@@ -24,12 +26,14 @@ def score(samplePeaks, mapPeaks, ratio, debug):
         matchFreq,matchMag = bestMatch(freq,mag, mapPeaks)
         freqDiff = abs(freq - matchFreq)
         magDiff = abs(mag - matchMag)
+        magDiff *= ratio
         if debug: print freqDiff, magDiff
-        peakScores.append(freqDiff)
-    peakScores.pop(peakScores.index(max(peakScores))) # .28, .48 with this line, .23, .48 without
-    return sum(peakScores) / len(samplePeaks)
+        # peakScores.append(magDiff)
+        peakScores.append(math.sqrt(magDiff**2 + freqDiff**2))
+    peakScores.pop(peakScores.index(max(peakScores)))
+    return sum(peakScores) / len(peakScores)
 
-def classify(samplePeaks, trainingDataMap, ratio = 1.0, debug = False):
+def classify(samplePeaks, trainingDataMap, ratio = 100, debug = False):
     if debug: print samplePeaks
     bestScore = None
     bestMatch = []
