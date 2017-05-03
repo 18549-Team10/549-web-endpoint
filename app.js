@@ -4,6 +4,7 @@ const fs  = require('fs');
 const path  = require('path');
 const PythonShell = require('python-shell');
 const spawn = require('child_process').spawn;
+const os = require("os");
 
 const appRoot = process.cwd();
 const dataDirectory = appRoot + path.sep + 'data';
@@ -18,7 +19,7 @@ const chunkIndex = 1;
 const fillIndex = 2;
 const lastChunk = 3;
 const lastFrequency = 6000;
-const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL"];
+const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNKNOWN"];
 
 var options = {
   mode: 'text',
@@ -27,6 +28,8 @@ var options = {
 };
 
 function processPythonRun (fillLevel, err, results) {
+  console.log('hi');
+  if(os.platform() == 'win32') return;
   if (err) throw err;
   // results is an array consisting of messages collected during execution
   console.log('results: %j', results);
@@ -37,7 +40,6 @@ function processPythonRun (fillLevel, err, results) {
     }
   });
 }
-
 
 PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
 
@@ -97,3 +99,6 @@ server.on('listening', () => {
 
 server.bind(41234);
 // server listening 0.0.0.0:41234
+
+//Run express app
+require('./expressApp.js');

@@ -1,0 +1,38 @@
+<head>
+	<title>StreamFi | Containers</title>
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/css/index.css">
+	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+</head>
+
+<body id="background">
+	<div id="left-nav">
+		<ul>
+		  <li><a class="active" href="/"><i class="fa fa-home"></i><br>Home</a></li>
+		  <li><a href="/containers"><i class="fa fa-tint"></i><br>Containers</a></li>
+		  <li><a href="#" onclick="findValues()"><i class="fa fa-bar-chart"></i><br>Statistics</a></li>
+		  <li><a href="#"><i class="fa fa-cog"></i><br>Settings</a></li>
+		  <li><a href="#"><i class="fa fa-sign-out"></i><br>Sign Out</a></li>
+		</ul>
+	</div>
+	<div id="content" >
+		<h2>Click Statistics to Receive StreamFi Data</h2>
+	</div>
+	<script>
+		function findValues() {
+			var myList;
+			$.getJSON('/json/test.json').done(function (data) {
+				myList = data;
+				var jsonData = document.getElementById("content");
+				jsonData.innerHTML += "Container ID = ";
+				jsonData.innerHTML += data.containerID;
+				jsonData.innerHTML += "<br>";
+				jsonData.innerHTML += "Fill Level =";
+				jsonData.innerHTML += data.fillLevel;
+				jsonData.innerHTML += "<br>";
+				console.log(data);
+			});
+		}
+	</script>
+</body>
