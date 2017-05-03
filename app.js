@@ -19,7 +19,7 @@ const chunkIndex = 1;
 const fillIndex = 2;
 const lastChunk = 3;
 const lastFrequency = 6000;
-const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL"];
+const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNKNOWN"];
 
 var options = {
   mode: 'text',
