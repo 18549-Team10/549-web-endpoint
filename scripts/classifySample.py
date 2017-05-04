@@ -5,36 +5,24 @@
 
 import math
 
-def bestMatch(freq, mag, mapPeaks, prevPeaksMatched):
+def bestMatch(freq, mag, mapPeaks):
     # currently, matches only based on frequencies, but can be changed to 
     # match based on magnitude as well
     minDist = None
     bestFreq, bestMag = None, None
-    secondBestFreq, secondBestMag = None, None
-    print("Map Peaks = " + str(mapPeaks))
     for (mapFreq, mapMag) in mapPeaks:
         if mapFreq == None: continue
         dist = abs(mapFreq - freq)
-        if (minDist == None or dist < minDist) and dist not in prevPeaksMatched:
-            minDist = dist
-            if (bestFreq != None and bestMag != None):
-                secondBestFreq = bestFreq
-                secondBestMag = bestMag
-            bestFreq, bestMag = mapFreq, mapMag
-            prevPeaksMatched.append(bestFreq)
-    if dist in prevPeaksMatched:
-        bestFreq, bestMag = secondBestFreq, secondBestMag
-    print("Best Freq = " + str(bestFreq))
-    print("Best Mag = " + str(bestMag))
+        minDist = dist
+        bestFreq, bestMag = mapFreq, mapMag
     return bestFreq, bestMag
 
 def score(samplePeaks, mapPeaks, ratio, debug):
     # currently, only adds to score based on closeness of frequencies, but can
     # be modified to score based on similarity of magnitude as wells
     peakScores = []
-    prevPeaksMatched = []
     for (freq,mag) in samplePeaks:
-        matchFreq,matchMag = bestMatch(freq,mag, mapPeaks, prevPeaksMatched)
+        matchFreq,matchMag = bestMatch(freq,mag, mapPeaks)
         freqDiff = abs(freq - matchFreq)
         magDiff = abs(mag - matchMag)
         magDiff *= ratio

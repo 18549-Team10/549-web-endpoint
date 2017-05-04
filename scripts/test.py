@@ -3,7 +3,7 @@
 import random
 import rawToFill
 import os
-import visualizer
+#import visualizer
 
 def readFile(path):
     with open(path, "rt") as f:
@@ -30,7 +30,7 @@ def test(trials = 100, ratio = 100, debug = False):
             rawSample = rawSampleString[start*sampleSize:(start + 1)*sampleSize]
             data.append(rawSample)
         guess = rawToFill.rawToFill(data, ratio = ratio, debug = debug)
-        if debug: visualizer.visualizeSampleWithFingerprints(data)
+        #if debug: visualizer.visualizeSampleWithFingerprints(data)
         if debug: print "guess: ", guess
         guesses[guess] = guesses.get(guess, 0) + 1
         if guess == fillLevel:
