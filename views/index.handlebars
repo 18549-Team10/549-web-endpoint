@@ -324,9 +324,7 @@
             $.getJSON('/json/currentFill.json').done(function (data) {
                 myList = data;
                 var jsonData = document.getElementById("json-data");
-                console.log(jsonData);
                 jsonData.innerHTML += "Container ID = ";
-                console.log(jsonData);
                 jsonData.innerHTML += data.containerID;
                 jsonData.innerHTML += "<br>";
                 jsonData.innerHTML += "Fill Level = ";
@@ -334,8 +332,6 @@
                 jsonData.innerHTML += "<br>";
                 var lastModified = document.getElementById("current-time");
                 lastModified.innerHTML += data.currentTime;
-                console.log(lastModified.innerHTML);
-                console.log(data);
             });
 
         }
