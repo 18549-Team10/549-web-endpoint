@@ -16,7 +16,7 @@ def test(trials = 100, ratio = 100, debug = False):
     count   = 0
     guesses = {}
     oldData = None
-    sampleSize = 1000
+    sampleSize = rawToFill.fp.SAMPLE_SIZE
     fillLevels = [f for (p,f) in sorted([(p,f) for (f,p) in rawToFill.FILL_PERCENTAGES.items()])]
     for trial in range(trials):
         fillLevel = random.choice(fillLevels)
@@ -25,12 +25,13 @@ def test(trials = 100, ratio = 100, debug = False):
         data = []
         for rawSampleFile in os.listdir(rawSampleDir):
             count += 1
+            # rawSampleFile = random.choice(os.listdir(rawSampleDir))
             rawSampleString = readFile(rawSampleDir + os.sep + rawSampleFile).splitlines()
             start = random.randint(0,len(rawSampleString)/sampleSize - 1)
             rawSample = rawSampleString[start*sampleSize:(start + 1)*sampleSize]
             data.append(rawSample)
-        guess = rawToFill.rawToFill(data, ratio = ratio, debug = debug)
         if debug: visualizer.visualizeSampleWithFingerprints(data)
+        guess = rawToFill.rawToFill(data, ratio = ratio, debug = debug)
         if debug: print "guess: ", guess
         guesses[guess] = guesses.get(guess, 0) + 1
         if guess == fillLevel:

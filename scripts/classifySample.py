@@ -11,7 +11,7 @@ def bestMatch(freq, mag, mapPeaks, prevPeaksMatched):
     minDist = None
     bestFreq, bestMag = None, None
     secondBestFreq, secondBestMag = None, None
-    print("Map Peaks = " + str(mapPeaks))
+    # print("Map Peaks = " + str(mapPeaks))
     for (mapFreq, mapMag) in mapPeaks:
         if mapFreq == None: continue
         dist = abs(mapFreq - freq)
@@ -24,8 +24,8 @@ def bestMatch(freq, mag, mapPeaks, prevPeaksMatched):
             prevPeaksMatched.append(bestFreq)
     if dist in prevPeaksMatched:
         bestFreq, bestMag = secondBestFreq, secondBestMag
-    print("Best Freq = " + str(bestFreq))
-    print("Best Mag = " + str(bestMag))
+    # print("Best Freq = " + str(bestFreq))
+    # print("Best Mag = " + str(bestMag))
     return bestFreq, bestMag
 
 def score(samplePeaks, mapPeaks, ratio, debug):
@@ -44,7 +44,7 @@ def score(samplePeaks, mapPeaks, ratio, debug):
     return sum(peakScores) / len(peakScores)
 
 def classify(samplePeaks, trainingDataMap, ratio = 100, debug = False):
-    if debug: print samplePeaks
+    if debug: print "sample peaks", samplePeaks
     bestScore = None
     bestMatch = []
     for fillLevel in trainingDataMap.keys():

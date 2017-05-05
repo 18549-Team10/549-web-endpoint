@@ -95,6 +95,34 @@ def fingerprintVisualize():
     plt.grid(True)
     plt.show()
 
+def visualizeSampleWithFingerprints(amplitudeDataSets):
+    plt.clf()
+    fingerprints = fp.readFingerprints()
+    allData = []
+    for data in amplitudeDataSets:
+        allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
+    print "visualizer... getting fingerprint for sample"
+    sampleFingerprint = fp.condenseData(allData)
+    print "visualizer... sample fingerprint", sampleFingerprint
+    dataLabels = []
+    handles = []
+    for fingerprint in fingerprints:
+        x = [f for (f,m) in fingerprints[fingerprint]]
+        y = [m for (f,m) in fingerprints[fingerprint]]
+        handle, = plt.plot(x,y)
+        handles.append(handle)
+        dataLabels.append(fingerprint)
+    x = [f for (f,m) in sampleFingerprint]
+    y = [m for (f,m) in sampleFingerprint]
+    handle, = plt.plot(x,y)
+    handles.append(handle)
+    dataLabels.append("sample")
+    plt.xlabel('Freq')
+    plt.ylabel('|Y(Freq)|')
+    plt.title('Fingerprints')
+    plt.legend(handles, dataLabels)
+    plt.grid(True)
+    plt.show()
 
 if len(sys.argv) > 1:
     print(sys.argv)
@@ -103,6 +131,6 @@ if len(sys.argv) > 1:
     dataDir = os.path.dirname(scriptPath) + os.path.sep + "../data" + os.path.sep + extension
     graphDir = os.path.dirname(scriptPath) + os.path.sep + "../graphs" + os.path.sep + extension
     getDataAndVisualize(dataDir, graphDir)
-else:
-    # getDataAndVisualize()
-    fingerprintVisualize()
+# else:
+#     # getDataAndVisualize()
+#     fingerprintVisualize()

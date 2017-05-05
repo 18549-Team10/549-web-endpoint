@@ -32,7 +32,7 @@ def rawToFill(amplitudeDataSets, debug = False, ratio = 100):
     allData = []
     for data in amplitudeDataSets:
         allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
-    fill = classifySample.classify(fp.condenseData(data), fingerprints, ratio = ratio, debug = debug)
+    fill = classifySample.classify(fp.condenseData(allData), fingerprints, ratio = ratio, debug = debug)
 
     writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
 
