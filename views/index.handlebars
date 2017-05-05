@@ -186,7 +186,7 @@
                                 <div class="footer">
                                     <hr>
                                     <div class="stats">
-                                        <i class="fa fa-clock-o"></i> Last measurement: now
+                                        <i class="fa fa-clock-o"></i>Last measurement: <div id="current-time"></div> 
                                     </div>
                                 </div>
                             </div>
@@ -301,23 +301,37 @@
 
 	<script type="text/javascript">
     	$(document).ready(function(){
-            var myList;
             getJSONFile();
         });
 
+               function findValues() {
+           var myList;
+           $.getJSON('/json/currentFill.json').done(function (data) {
+               myList = data;
+               var jsonData = document.getElementById("json-data");
+               jsonData.innerHTML += "Container ID = ";
+               jsonData.innerHTML += data.containerID;
+               jsonData.innerHTML += "<br>";
+               jsonData.innerHTML += "Fill Level =";
+               jsonData.innerHTML += data.fillLevel;
+               jsonData.innerHTML += "<br>";
+               console.log(data);
+           });
+       }
+
         function getJSONFile() {
+            var myList;
             $.getJSON('/json/currentFill.json').done(function (data) {
                 myList = data;
                 var jsonData = document.getElementById("json-data");
-                console.log(jsonData);
                 jsonData.innerHTML += "Container ID = ";
-                console.log(jsonData);
                 jsonData.innerHTML += data.containerID;
                 jsonData.innerHTML += "<br>";
                 jsonData.innerHTML += "Fill Level = ";
                 jsonData.innerHTML += data.fillLevel;
                 jsonData.innerHTML += "<br>";
-                console.log(data);
+                var lastModified = document.getElementById("current-time");
+                lastModified.innerHTML += data.currentTime;
             });
 
         }

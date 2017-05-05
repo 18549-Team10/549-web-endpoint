@@ -4,6 +4,7 @@ import os
 import classifySample
 import fingerprinter as fp
 import numpy as np
+import datetime
 
 FILL_PERCENTAGES = {
                     'EMPTY'         : 0,
@@ -20,7 +21,8 @@ def writeFile(path, text):
         f.write(text)
 
 def writeToFrontEnd(label, percentage):
-    contentsToWrite = '{"containerID" : %d,\n"fillLevel" : %d}'%(1,percentage)
+    #print datetime.datetime.now()
+    contentsToWrite = '{"containerID" : %d,\n"fillLevel" : %d,\n"currentTime" : "%s"}'%(1,percentage,datetime.datetime.now())
     writeFile("../public/json/currentFill.json",contentsToWrite)
 
 def rawToFill(amplitudeDataSets, debug = False, ratio = 100):

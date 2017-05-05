@@ -45,7 +45,6 @@ def condenseData(data, debug = False):
     if debug: print "n", n
     frq = [1.0 * i * SAMPLING_RATE / (SAMPLE_SIZE/2) for i in range(SAMPLE_SIZE/2)]
     allPeaks = []
-    # print "cutoff", 1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2)
     for i in range(0,len(data),SAMPLE_SIZE):
         if i + SAMPLE_SIZE > len(data):
             continue # do not include, since not a complete sample
@@ -53,27 +52,26 @@ def condenseData(data, debug = False):
         freqResponseCut = freqResponse[:len(freqResponse)/2]
         freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2)))] # this is mostly noise
         peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
-        # print "peaks len", len(peaks)
         # topPeaks = sorted([(f,m) for (m,f) in sorted(peaks)[SAMPLE_SIZE/2 - SAMPLE_SIZE/500:]])
-        # print len(topPeaks)
         allPeaks.extend(peaks)
-    # allPeaks = sorted([(f,m) for (m,f) in sorted(allPeaks)[len(allPeaks) - 1 - 10*NUM_PEAKS:]])
-    # allPeaks.sort()
-    allPeaks = sorted([(f,m) for (m,f) in allPeaks])
+    allPeaks = sorted([(f,m) for (m,f) in sorted(allPeaks)[len(allPeaks) - 1 - 10*NUM_PEAKS:]])
+    allPeaks.sort()
+    # allPeaks = sorted([(f,m) for (m,f) in allPeaks])
     lowpassIndex = 0
     while lowpassIndex < len(allPeaks) and allPeaks[lowpassIndex][0] < LOWPASS_FREQ:
         lowpassIndex += 1
     allPeaks = allPeaks[:lowpassIndex]
 
-    allPeaks = sorted([(m,f) for (f,m) in allPeaks])
-    cutoffMag = allPeaks[len(allPeaks) - 1][0] *.85
-    cutoffI = 0
-    while cutoffI < len(allPeaks) and allPeaks[cutoffI][0] < cutoffMag:
-        cutoffI += 1
-    if cutoffI >= len(allPeaks) - NUM_PEAKS + 1: cutoffI = len(allPeaks) - NUM_PEAKS # must have at least num peaks many peaks 
-    allPeaks = sorted([(f,m) for (m,f) in allPeaks[cutoffI:]])
+    # peaks = copy.copy(allPeaks)
+
+    # allPeaks = sorted([(m,f) for (f,m) in allPeaks])
+    # cutoffMag = allPeaks[len(allPeaks) - 1][0] *.85
+    # cutoffI = 0
+    # while cutoffI < len(allPeaks) and allPeaks[cutoffI][0] < cutoffMag:
+    #     cutoffI += 1
+    # if cutoffI >= len(allPeaks) - NUM_PEAKS + 1: cutoffI = len(allPeaks) - NUM_PEAKS # must have at least num peaks many peaks 
+    # allPeaks = sorted([(f,m) for (m,f) in allPeaks[cutoffI:]])
     # return topPeaks
-    # print "\t\t\t", len(allPeaks)
 
 
     if debug:
@@ -86,8 +84,6 @@ def condenseData(data, debug = False):
         dist = abs(allPeaks[i][0] - allPeaks[i - 1][0])
         dists.append((dist,i))
 
-
-
     indicesToSplit = sorted([j for (d,j) in sorted(dists)[len(dists) - NUM_PEAKS + 1:]])
     if debug: print sorted(dists)[len(dists) - NUM_PEAKS + 1:]
     if debug: print indicesToSplit, [(allPeaks[i-1], allPeaks[i]) for i in indicesToSplit]
@@ -99,11 +95,25 @@ def condenseData(data, debug = False):
         allPeaks = allPeaks[i-j:]
         j = i
     groups.append(allPeaks)
-    # print groups
+
+    # margin = 100 # Hz
+    # for allPeaksI in range(len(allPeaks)):
+    #     (f,m) = allPeaks[allPeaksI]
+    #     currGroup = []
+    #     minF, maxF = f - margin, f + margin
+    #     peakI = 0
+    #     while peakI < len(peaks) and peaks[peakI][0] < minF: peakI += 1
+    #     while peakI < len(peaks) and peaks[peakI][0] < maxF:
+    #         currGroup.append(peaks[peakI])
+    #         peakI += 1
+    #     if len(indicesToSplit) > 0 and allPeaksI == indicesToSplit[0]:
+    #         groups.append(currGroup) # TODO: fix this
+    #         indicesToSplit.pop(0)
+    # groups.append(currGroup)
+
     output = []
     maxMag = None
     for g in groups:
-        # print max(g)
         avgFreq, avgMag = weightedAvg(g), avg([m for (f,m) in g]) # avg([f for (f,m) in g])
         if maxMag == None or avgMag > maxMag: maxMag = avgMag
         output.append((avgFreq, avgMag))

@@ -11,6 +11,7 @@ def readFile(path):
 
 def test(trials = 100, ratio = 100, debug = False):
     if debug: print "testing " + str(trials) + " trials.."
+    largeNumTrialsThreshold = 50
     correct = 0
     close   = 0
     count   = 0
@@ -19,13 +20,15 @@ def test(trials = 100, ratio = 100, debug = False):
     sampleSize = rawToFill.fp.SAMPLE_SIZE
     fillLevels = [f for (p,f) in sorted([(p,f) for (f,p) in rawToFill.FILL_PERCENTAGES.items()])]
     for trial in range(trials):
+        if trials > largeNumTrialsThreshold and trial == trials / 4: print "25%..."
+        elif trials > largeNumTrialsThreshold and trial == trials / 2: print "50%..."
+        elif trials > largeNumTrialsThreshold and trial == trials * 3 / 4: print "75%..."
         fillLevel = random.choice(fillLevels)
         if debug: print "\nAnswer:", fillLevel
         rawSampleDir = "../data/" + fillLevel
         data = []
         for rawSampleFile in os.listdir(rawSampleDir):
             count += 1
-            # rawSampleFile = random.choice(os.listdir(rawSampleDir))
             rawSampleString = readFile(rawSampleDir + os.sep + rawSampleFile).splitlines()
             start = random.randint(0,len(rawSampleString)/sampleSize - 1)
             rawSample = rawSampleString[start*sampleSize:(start + 1)*sampleSize]
