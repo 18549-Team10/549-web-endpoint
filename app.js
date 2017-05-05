@@ -19,6 +19,8 @@ const chunkIndex = 1;
 const fillIndex = 2;
 const lastChunk = 3;
 const lastFrequency = 6000;
+const firstChunk = 0;
+const firstFrequency = 10000;
 const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNKNOWN"];
 
 var options = {
@@ -70,6 +72,7 @@ server.on('message', (msg, rinfo) => {
 
   var dataTarget = dataDirectory + path.sep + fillLevel;
   //Full path to data
+
   var dataPath = dataTarget + path.sep + dataFilename;
   options.args[0] = fillLevel;
 
@@ -85,10 +88,10 @@ server.on('message', (msg, rinfo) => {
       return console.log(err);
     }
     console.log("The file was saved!");
-    // if(chunk == lastChunk && frequency == lastFrequency){
-    //   PythonShell.run('visualizer.py', options,
-    //                   (err,results) => processPythonRun(fillLevel, err, results));
-    // }
+    if(chunk == lastChunk && frequency == lastFrequency && fillLevel == "UNKNOWN"){
+      PythonShell.run('visualizer.py', options,
+                      (err,results) => processPythonRun(fillLevel, err, results));
+    }
   });
 });
 
