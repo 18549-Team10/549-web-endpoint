@@ -95,7 +95,7 @@ def fingerprintVisualize():
     plt.grid(True)
     plt.show()
 
-def visualizeSampleWithFingerprints(amplitudeDataSets):
+def visualizeSampleWithFingerprints(amplitudeDataSets, sampleMagAdd = 0, sampleMagMult = 1):
     plt.clf()
     fingerprints = fp.readFingerprints()
     allData = []
@@ -103,6 +103,7 @@ def visualizeSampleWithFingerprints(amplitudeDataSets):
         allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
     print "visualizer... getting fingerprint for sample"
     sampleFingerprint = fp.condenseData(allData)
+    allData = map(lambda (f,m) : (f,m*sampleMagMult + sampleMagAdd), sampleFingerprint)
     print "visualizer... sample fingerprint", sampleFingerprint
     dataLabels = []
     handles = []

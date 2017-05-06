@@ -65,12 +65,13 @@ def scoreJustFreq(samplePeaks, mapPeaks, ratio, debug = False):
         peakScores.append(freqDiff)
     return sum(peakScores) / len(peakScores)
 
-def classify(samplePeaks, trainingDataMap, ratio = 100, debug = False):
+def classify(samplePeaks, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, ratio = 100, debug = False):
+    samplePeaks = map(lambda (f,m) : (f,m*sampleMagMult + sampleMagAdd), samplePeaks)
     if debug: print "sample peaks", samplePeaks
     bestScore = None
     bestMatch = []
     for fillLevel in trainingDataMap.keys():
-        currScore = score(samplePeaks, trainingDataMap[fillLevel], ratio, debug)
+        currScore = scoreJustFreq(samplePeaks, trainingDataMap[fillLevel], ratio, debug)
         if debug: print fillLevel, currScore
         if bestScore == None or currScore < bestScore:
             bestScore = currScore

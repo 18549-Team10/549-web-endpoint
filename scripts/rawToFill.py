@@ -6,6 +6,9 @@ import fingerprinter as fp
 import numpy as np
 import datetime
 
+FRONT_END_JSON_PATH = "../public/json/currentFill.json"
+UNKNOWN_DATA_PATH   = "../data/UNKNOWN/"
+
 FILL_PERCENTAGES = {
                     'EMPTY'         : 0,
                     'QUARTER'       : 25,
@@ -23,9 +26,9 @@ def writeFile(path, text):
 def writeToFrontEnd(label, percentage):
     #print datetime.datetime.now()
     contentsToWrite = '{"containerID" : %d,\n"fillLevel" : %d,\n"currentTime" : "%s"}'%(1,percentage,datetime.datetime.now())
-    writeFile("../public/json/currentFill.json",contentsToWrite)
+    writeFile(FRONT_END_JSON_PATH, contentsToWrite)
 
-def rawToFill(amplitudeDataSets, debug = False, ratio = 100):
+def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100):
     if not os.path.exists(fp.FINGERPRINT_FILE_PATH):
         fp.fingerprint(FILL_PERCENTAGES.keys())
     fingerprints = fp.readFingerprints()
@@ -34,8 +37,22 @@ def rawToFill(amplitudeDataSets, debug = False, ratio = 100):
     allData = []
     for data in amplitudeDataSets:
         allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
-    fill = classifySample.classify(fp.condenseData(allData), fingerprints, ratio = ratio, debug = debug)
+    fill = classifySample.classify(fp.condenseData(allData), fingerprints, sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, ratio = ratio, debug = debug)
 
     writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
 
     return fill[0]
+
+def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100):
+    if not os.path.exists(fp.FINGERPRINT_FILE_PATH):
+        fp.fingerprint(FILL_PERCENTAGES.keys())
+    fingerprints = fp.readFingerprints()
+
+    allData = []
+    for file in os.listdir(UNKNOWN_DATA_PATH):
+        fileData = readFile(UNKNOWN_DATA_PATH + "/" + file)
+        allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
+
+    fill = classifySample.classify(fp.condenseData(allData), fingerprints, sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, ratio = ratio, debug = debug)
+
+    writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))

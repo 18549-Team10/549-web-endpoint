@@ -11,7 +11,7 @@ HIGHPASS_FREQ = 15000 # Hz
 LOWPASS_FREQ  = 50000
 NUM_PEAKS = 2
 SAMPLING_RATE = 62500 # 62.5 kHz
-SAMPLE_SIZE = 1024
+SAMPLE_SIZE = 8192
 
 def readFile(path):
     with open(path, "rt") as f:
@@ -42,6 +42,7 @@ def weightedAvg(l):
 
 def condenseData(data, debug = False):
     n = len(data)
+    SAMPLE_SIZE = n
     if debug: print "n", n
     frq = [1.0 * i * SAMPLING_RATE / (SAMPLE_SIZE/2) for i in range(SAMPLE_SIZE/2)]
     allPeaks = []
