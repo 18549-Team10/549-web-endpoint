@@ -130,23 +130,23 @@ def convertToDict(folderName, debug = False):
                 data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
     return condenseData(data, debug)
 
-def writeFingerprints(trainingData):
+def writeFingerprints(trainingData, scriptPath):
     stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])
-    writeFile(FINGERPRINT_FILE_PATH, stringToWrite)
+    writeFile(scriptPath + os.sep + FINGERPRINT_FILE_PATH, stringToWrite)
 
-def readFingerprints():
-    rawString = readFile(FINGERPRINT_FILE_PATH)
+def readFingerprints(fingerprintPath):
+    rawString = readFile(fingerprintPath)
     fingerprints = dict()
     for line in rawString.splitlines():
         line = line.split(",")
         fingerprints[line[0]] = [(float(line[i]), float(line[i+1])) for i in range(1,len(line),2)]
     return fingerprints
 
-def fingerprint(fillLevelNames, debug = False):
+def fingerprint(fillLevelNames, scriptPath, debug = False):
     print "fingerprinting.."
     trainingData = dict()
     for level in fillLevelNames:
-        trainingData[level] = convertToDict("../data/" + level, debug)
+        trainingData[level] = convertToDict(scriptPath + os.sep + "../data/" + level, debug)
         print "done with " + level
     print trainingData
-    writeFingerprints(trainingData)
+    writeFingerprints(trainingData, scriptPath)
