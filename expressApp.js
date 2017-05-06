@@ -26,6 +26,10 @@ app.get('/containers', function(req, res) {
 	res.render('containers');
 });
 
+app.get('/statistics', function(req, res) {
+	res.render('statistics');
+})
+
 // Declaring which port # the app should be listening on
 var port = process.env.PORT || 3000;
 

@@ -43,7 +43,7 @@ function processPythonRun (fillLevel, err, results) {
   });
 }
 
-PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
+//PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
 
 function convertData(data){
   return ((data >> 2) && 0xFFF);
@@ -89,7 +89,7 @@ server.on('message', (msg, rinfo) => {
     }
     console.log("The file was saved!");
     if(chunk == lastChunk && frequency == lastFrequency && fillLevel == "UNKNOWN"){
-      PythonShell.run('visualizer.py', options,
+      PythonShell.run('rawToFill.py', options,
                       (err,results) => processPythonRun(fillLevel, err, results));
     }
   });
