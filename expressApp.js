@@ -34,10 +34,6 @@ app.get('/notifications', function(req, res) {
 	res.render('notifications');
 });
 
-app.get('/settings', function(req, res) {
-	res.render('settings');
-});
-
 app.get('/about-us', function(req, res) {
 	res.render('about-us');
 });
