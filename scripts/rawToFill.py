@@ -45,7 +45,8 @@ def writeToFrontEndTime(percentage, time, debug = False):
     writeFile(FRONT_END_JSON_TIME_PATH, contentsToWrite)
     visualizer.createPrevFillLevelGraph(timeValues, fillLevels)
 
-def clearUnknownDataFiles():
+def clearUnknownDataFiles(debug):
+    if debug: print "clearing files!"
     for filename in os.listdir(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH):
         if filename == FROZEN_DATA_FILE_NAME: continue
         writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename, "")
@@ -98,7 +99,7 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
     writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
     # we clear the files so that the cc3200 can keep appending to them, 
     # rather than needing to overwrite them
-    clearUnknownDataFiles()
+    clearUnknownDataFiles(debug)
 
     # we write the values again, so that we can recompute even if we do not have 
     # new data
@@ -106,10 +107,11 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
 
 if len(sys.argv) == 3:
     print(sys.argv)
-    scriptPath = os.path.dirname(sys.argv[0])
+    SCRIPT_PATH = os.path.dirname(sys.argv[0])
     DO_KEG = bool(sys.argv[1])
     debug = bool(sys.argv[2])
 else:
+    print "correct usage: script_path do_keg debug"
     SCRIPT_PATH = "."
     DO_KEG = True
     debug = True
@@ -122,4 +124,3 @@ else:
     import wb_fingerprinter as fp
 
 rawToFillLive(debug = debug)
-
