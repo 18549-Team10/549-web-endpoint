@@ -56,19 +56,25 @@ def bestMatchJustFreq(freq, mag, peaks, debug = False):
             bestFreq, bestMag = pFreq, pMag
     return bestFreq, bestMag
 
-def score(sampleMag, mapMag, ratio = 1, debug = False):
-    return abs(sampleMag*ratio - mapMag)
+def scoreJustFreq(samplePeaks, mapPeaks, ratio, debug = False):
+    peakScores = []
+    for (mapFreq, mapMag) in mapPeaks:
+        matchFreq, matchMag = bestMatchJustFreq(mapFreq, mapMag, samplePeaks, debug)
+        freqDiff = abs(mapFreq - matchFreq)
+        magDiff  = abs(mapMag - matchMag)
+        peakScores.append(freqDiff)
+    return sum(peakScores) / len(peakScores)
 
-def classify(sampleMag, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, ratio = .23, debug = False, halfDiff = 7500):
-    # samplePeaks = map(lambda (f,m) : (f,m*sampleMagMult + sampleMagAdd), samplePeaks)
-    if debug: print "sample mag", sampleMag
+def classify(samplePeaks, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, ratio = 100, debug = False, halfDiff = 7500):
+    samplePeaks = map(lambda (f,m) : (f,m*sampleMagMult + sampleMagAdd), samplePeaks)
+    if debug: print "sample peaks", samplePeaks
     bestScore = None
     bestMatch = []
     # if abs(samplePeaks[1][0] - samplePeaks[0][0]) < halfDiff:
     #     return ["HALF"]
     for fillLevel in trainingDataMap.keys():
         # if fillLevel == "HALF": continue
-        currScore = score(sampleMag, trainingDataMap[fillLevel], ratio, debug)
+        currScore = scoreJustFreq(samplePeaks, trainingDataMap[fillLevel], ratio, debug)
         if debug: print fillLevel, currScore
         if bestScore == None or currScore < bestScore:
             bestScore = currScore
