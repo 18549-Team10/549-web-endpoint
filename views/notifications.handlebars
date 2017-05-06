@@ -26,6 +26,7 @@
     <!--     Fonts and icons     -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="css/pe-icon-7-stroke.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -232,15 +233,15 @@
             $.getJSON('/json/exampleJSON.json').done(function (data) {
                 myList = data;
                 var table = document.getElementById("notifications");
-                for (i=0; i<data.containerID.length; i++) {
+                for (i=data.containerID.length-1; i>=0; i--) {
                     var length = table.getElementsByTagName("tr").length;
                     var row = table.insertRow(length);
                     var cell1 = row.insertCell(0);
                     var cell2 = row.insertCell(1);
                     var cell3 = row.insertCell(2);
                     cell1.innerHTML = data.containerID[i].toString();
-                    cell2.innerHTML = data.fillLevel[i].toString();
-                    cell3.innerHTML = data.currentTime[i].toString();                    
+                    cell2.innerHTML = data.fillLevel[i].toString() + "%";
+                    cell3.innerHTML = moment(data.currentTime[i].toString()).format('LLLL');                    
                 }
                 //var lastModified = document.getElementById("current-time");
                 //lastModified.innerHTML += data.currentTime;
