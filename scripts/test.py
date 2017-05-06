@@ -9,7 +9,7 @@ def readFile(path):
     with open(path, "rt") as f:
         return f.read()
 
-def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, halfDiff=7500):
+def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, halfDiff=0):
     if debug: print "testing " + str(trials) + " trials.."
     largeNumTrialsThreshold = 50
     correct = 0
@@ -20,9 +20,9 @@ def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, half
     sampleSize = rawToFill.fp.SAMPLE_SIZE
     fillLevels = [f for (p,f) in sorted([(p,f) for (f,p) in rawToFill.FILL_PERCENTAGES.items()])]
     for trial in range(trials):
-        if trials > largeNumTrialsThreshold and trial == trials / 4: print "25%..."
-        elif trials > largeNumTrialsThreshold and trial == trials / 2: print "50%..."
-        elif trials > largeNumTrialsThreshold and trial == trials * 3 / 4: print "75%..."
+        if trials > largeNumTrialsThreshold and trial == trials / 4: print "25%...", count/trial, close/trial
+        elif trials > largeNumTrialsThreshold and trial == trials / 2: print "50%...", count/trial, close/trial
+        elif trials > largeNumTrialsThreshold and trial == trials * 3 / 4: print "75%...", count/trial, close/trial
         fillLevel = random.choice(fillLevels)
         if debug: print "\nAnswer:", fillLevel
         rawSampleDir = "../data/" + fillLevel
