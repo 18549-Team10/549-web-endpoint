@@ -145,11 +145,11 @@ def readFingerprints(path):
         fingerprints[line[0]] = float(line[1])
     return fingerprints
 
-def fingerprint(fillLevelNames, debug = False):
+def fingerprint(fillLevelNames, path, debug = False):
     print "fingerprinting.."
     trainingData = dict()
     for level in fillLevelNames:
         trainingData[level] = convertToDict("../data/" + level, debug)
         print "done with " + level
     print trainingData
-    writeFingerprints(trainingData)
+    writeFingerprints(trainingData, path)

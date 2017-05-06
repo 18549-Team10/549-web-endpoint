@@ -127,14 +127,14 @@ def visualizeSampleWithFingerprints(amplitudeDataSets, sampleMagAdd = 0, sampleM
     plt.grid(True)
     plt.show()
 
-def createPrevFillLevelGraph(timeData, fillLevels):
+def createPrevFillLevelGraph(timeData, fillLevels, scriptPath):
     plt.clf()
     plt.plot(timeData, fillLevels)
     plt.xlabel('Time (Minutes)')
     plt.ylabel('Fill (%)')
     plt.title('Fill Level Over Time')
     plt.grid(True)
-    plt.savefig(".." + os.sep + "public" + os.sep + "img" + os.path.sep + "prev_fill_level_graph.png")
+    plt.savefig(scriptPath + os.sep + "../public" + os.sep + "img" + os.path.sep + "prev_fill_level_graph.png")
 
 if len(sys.argv) > 1:
     print(sys.argv)
