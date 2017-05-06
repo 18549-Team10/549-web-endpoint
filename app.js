@@ -21,6 +21,7 @@ const lastChunk = 3;
 const lastFrequency = 6000;
 const firstChunk = 0;
 const firstFrequency = 10000;
+var iterationsSeen = 0;
 const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNKNOWN"];
 
 var options = {
@@ -89,8 +90,12 @@ server.on('message', (msg, rinfo) => {
     }
     console.log("The file was saved!");
     if(chunk == lastChunk && frequency == lastFrequency && fillLevel == "UNKNOWN"){
-      PythonShell.run('rawToFill.py', options,
-                      (err,results) => processPythonRun(fillLevel, err, results));
+      iterationsSeen+=1;
+      if(iterationsSeen == 8){
+        iterationsSeen = 0;
+        PythonShell.run('rawToFill.py', options,
+                        (err,results) => processPythonRun(fillLevel, err, results));
+      }
     }
   });
 });
