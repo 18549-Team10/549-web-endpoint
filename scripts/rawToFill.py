@@ -120,11 +120,11 @@ else:
     debug = True
 
 if DO_KEG:
-    print "keg!"
+    print "keg!", sys.arv[1]
     import classifySample as cs
     import fingerprinter as fp
 else:
-    print "waterbottle."
+    print "waterbottle.", sys.arv[1]
     import wb_classifySample as cs
     import wb_fingerprinter as fp
 
