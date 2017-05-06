@@ -70,13 +70,12 @@ def classify(samplePeaks, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, 
     if debug: print "sample peaks", samplePeaks
     bestScore = None
     bestMatch = []
-    if abs(samplePeaks[1][0] - samplePeaks[0][0]) < halfDiff:
-        return ["HALF"]
+    # if abs(samplePeaks[1][0] - samplePeaks[0][0]) < halfDiff:
+    #     return ["HALF"]
     for fillLevel in trainingDataMap.keys():
-        if fillLevel == "HALF": continue
+        # if fillLevel == "HALF": continue
         currScore = scoreJustFreq(samplePeaks, trainingDataMap[fillLevel], ratio, debug)
         if debug: print fillLevel, currScore
-        print("FILL LEVEL = " + str(fillLevel))
         if bestScore == None or currScore < bestScore:
             bestScore = currScore
             bestMatch = [fillLevel]

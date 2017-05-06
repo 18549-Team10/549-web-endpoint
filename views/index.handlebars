@@ -32,14 +32,7 @@
 <body>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="img/sidebar-5.jpg">
-
-    <!--
-
-        Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-        Tip 2: you can also add an image using data-image tag
-
-    -->
+    <div class="sidebar" data-color="blue" data-image="img/sidebar-2.jpg">
 
     	<div class="sidebar-wrapper">
             <div class="logo">
@@ -47,11 +40,6 @@
                     StreamFi
                 </a>
             </div>
-
-		  <!--
-		  <li><a href="#" onclick="findValues()"><i class="fa fa-bar-chart"></i><br>Statistics</a></li>
-		  <li><a href="#"><i class="fa fa-cog"></i><br>Settings</a></li>
-		  <li><a href="#"><i class="fa fa-sign-out"></i><br>Sign Out</a></li>-->
 
             <ul class="nav">
                 <li class="active">
@@ -67,31 +55,25 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/containers" onclick="findValues()">
+                    <a href="/statistics">
                         <i class="fa fa-bar-chart"></i>
                         <p>Statistics</p>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <i class="pe-7s-map-marker"></i>
-                        <p>Maps</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
+                    <a href="/notifications">
                         <i class="pe-7s-bell"></i>
                         <p>Notifications</p>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="/settings">
                         <i class="fa fa-cog"></i>
                         <p>Settings</p>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="/sign-out">
                         <i class="fa fa-sign-out"></i>
                         <p>Sign Out</p>
                     </a>
@@ -114,23 +96,17 @@
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-left">
-                        <li>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-dashboard"></i>
-                            </a>
-                        </li>
                         <li class="dropdown">
                               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     <i class="fa fa-globe"></i>
                                     <b class="caret"></b>
-                                    <span class="notification">5</span>
+                                    <span class="notification">4</span>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="#">Notification 1</a></li>
-                                <li><a href="#">Notification 2</a></li>
-                                <li><a href="#">Notification 3</a></li>
-                                <li><a href="#">Notification 4</a></li>
-                                <li><a href="#">Another notification</a></li>
+                                <li><a href="#">Keg Fill Level at 25%! (2 min ago)</a></li>
+                                <li><a href="#">Keg Fill Level at 50%! (2 hr ago)</a></li>
+                                <li><a href="#">Keg Fill Level at 75%! (3 hr ago)</a></li>
+                                <li><a href="#">Keg Fill Level at 100%! (4 hr ago)</a></li>
                               </ul>
                         </li>
                         <li>
@@ -234,6 +210,7 @@
                             <div class="header">
                                 <h4 class="title">Container Tracker</h4>
                                 <p class="category">Keeping track of all your containers</p>
+                                <img src="img/mini-keg.jpg" style="max-height:200px;max-width:150px;">
                             </div>
                             <div class="content">
                             </div>
@@ -254,7 +231,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="/about-us">
                                 About StreamFi
                             </a>
                         </li>

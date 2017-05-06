@@ -125,6 +125,15 @@ def visualizeSampleWithFingerprints(amplitudeDataSets, sampleMagAdd = 0, sampleM
     plt.grid(True)
     plt.show()
 
+def createPrevFillLevelGraph(timeData, fillLevels):
+    plt.clf()
+    plt.plot(timeData, fillLevels)
+    plt.xlabel('Time (Minutes)')
+    plt.ylabel('Fill (%)')
+    plt.title('Fill Level Over Time')
+    plt.grid(True)
+    plt.savefig(graphDir + os.path.sep + "prev_fill_level_graph.png")
+
 if len(sys.argv) > 1:
     print(sys.argv)
     scriptPath = sys.argv[0]
@@ -132,6 +141,7 @@ if len(sys.argv) > 1:
     dataDir = os.path.dirname(scriptPath) + os.path.sep + "../data" + os.path.sep + extension
     graphDir = os.path.dirname(scriptPath) + os.path.sep + "../graphs" + os.path.sep + extension
     getDataAndVisualize(dataDir, graphDir)
-# else:
+else:
+    graphDir = "../graphs"
 #     # getDataAndVisualize()
 #     fingerprintVisualize()
