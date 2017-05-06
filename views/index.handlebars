@@ -110,11 +110,6 @@
                                 <li><a href="#">Keg Fill Level at 100%! (4 hr ago)</a></li>
                               </ul>
                         </li>
-                        <li>
-                           <a href="">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        </li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -170,7 +165,7 @@
                                     </div>
                                     <hr>
                                     <div class="stats">
-                                        <i class="fa fa-history"></i> Updated 3 minutes ago
+                                        <i class="fa fa-history"></i> Updated on: <div id="current-time2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +269,9 @@
                 var fillImg = document.getElementById("fill-img");
                 fillImg.innerHTML += getImageByFillLevel(data.fillLevel);
                 var lastModified = document.getElementById("current-time");
+                var lastModified2 = document.getElementById("current-time2");
                 lastModified.innerHTML += moment(data.currentTime).format('LLLL');
+                lastModified2.innerHTML += moment(data.currentTime).format('LLLL');
             });
         }
     </script>

@@ -51,3 +51,15 @@
 	font-size: 12px;
 	background: green;
 }
+
+#sign-out-bg {
+    background-image: "img/sidebar-2.jpg";
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    overflow: auto;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 255, 0.7);
+}
