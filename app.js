@@ -43,7 +43,7 @@ function processPythonRun (fillLevel, err, results) {
   });
 }
 
-PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
+//PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
 
 function convertData(data){
   return ((data >> 2) && 0xFFF);
