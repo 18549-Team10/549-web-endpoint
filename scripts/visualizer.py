@@ -12,6 +12,7 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
     #clear any data off graph
     plt.clf()
     samplingRate = 62500 # 62.5 kHz
+    highpassFreq = 25000
     for data in sampleData:
         n = len(data)
         if n > 0:
@@ -19,6 +20,7 @@ def visualizeFreq(sampleData, dataLabels, graphDir):
             frq = [1.0 * i * samplingRate / (n/2) for i in range(n/2)]
             freq_response = np.fft.fft(data) # len [range(n/2)]
             freq_response = freq_response[:len(freq_response) / 2]
+            freq_response[:int(1.0*highpassFreq/samplingRate*(n/2))] = [0 for i in range(int(1.0*highpassFreq/samplingRate*(n/2)))] # this is mostly noise
             handle, = plt.plot(frq, abs(freq_response))
             handles.append(handle)
 
@@ -79,7 +81,7 @@ def getDataAndVisualize(dataDir = "../data/", graphDir = "../graphs"):
 
 def fingerprintVisualize():
     plt.clf()
-    fingerprints = fp.readFingerprints()
+    fingerprints = fp.readFingerprints(scriptPath + os.sep + "../fingerprintData/fingerprints.csv")
     dataLabels = []
     handles = []
     for fingerprint in fingerprints:
@@ -97,7 +99,7 @@ def fingerprintVisualize():
 
 def visualizeSampleWithFingerprints(amplitudeDataSets, sampleMagAdd = 0, sampleMagMult = 1):
     plt.clf()
-    fingerprints = fp.readFingerprints()
+    fingerprints = fp.readFingerprints(scriptPath + os.sep + "../fingerprintData/fingerprints.csv")
     allData = []
     for data in amplitudeDataSets:
         allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
@@ -143,5 +145,6 @@ if len(sys.argv) > 1:
     getDataAndVisualize(dataDir, graphDir)
 else:
     graphDir = "../graphs"
+    scriptDir = "."
 #     # getDataAndVisualize()
 #     fingerprintVisualize()

@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import copy
 
+FINGERPRINT_FILE_PATH = "../fingerprintData/wb_fingerprints.csv"
+
 HIGHPASS_FREQ = 25000 # Hz
 LOWPASS_FREQ  = 50000
-MIN_NUM_PEAKS = 2
-MAX_NUM_PEAKS = 3
+NUM_PEAKS = 3
 SAMPLING_RATE = 62500 # 62.5 kHz
-SAMPLE_SIZE = 8196
+SAMPLE_SIZE = 4096
 
 def readFile(path):
     with open(path, "rt") as f:
@@ -48,18 +49,15 @@ def condenseData(data, debug = False):
     for i in range(0,len(data),SAMPLE_SIZE):
         if i + SAMPLE_SIZE > len(data):
             continue # do not include, since not a complete sample
-        freqResponse = np.fft.fft(data[i:i + SAMPLE_SIZE])/n # [range(n/2)]
+        freqResponse = np.fft.fft(data[i:i + SAMPLE_SIZE]) # [range(n/2)]
         freqResponseCut = freqResponse[:len(freqResponse)/2]
         freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2)))] # this is mostly noise
         peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
         # topPeaks = sorted([(f,m) for (m,f) in sorted(peaks)[SAMPLE_SIZE/2 - SAMPLE_SIZE/500:]])
         allPeaks.extend(peaks)
-    # allPeaks = sorted([(f,m) for (m,f) in sorted(allPeaks)[len(allPeaks) - 1 - NUM_PEAKS:]])
-    # allPeaks.sort()
-
-    return avg([m for (m,f) in allPeaks])
-
-    allPeaks = sorted([(f,m) for (m,f) in allPeaks])
+    allPeaks = sorted([(f,m) for (m,f) in sorted(allPeaks)[len(allPeaks) - 1 - 10*NUM_PEAKS:]])
+    allPeaks.sort()
+    # allPeaks = sorted([(f,m) for (m,f) in allPeaks])
     lowpassIndex = 0
     while lowpassIndex < len(allPeaks) and allPeaks[lowpassIndex][0] < LOWPASS_FREQ:
         lowpassIndex += 1
@@ -67,28 +65,28 @@ def condenseData(data, debug = False):
 
     # peaks = copy.copy(allPeaks)
 
-    allPeaks = sorted([(m,f) for (f,m) in allPeaks])
-    cutoffMag = allPeaks[len(allPeaks) - 1][0] *.60
-    cutoffI = 0
-    while cutoffI < len(allPeaks) and allPeaks[cutoffI][0] < cutoffMag:
-        cutoffI += 1
-    if cutoffI >= len(allPeaks) - MIN_NUM_PEAKS + 1: cutoffI = len(allPeaks) - MIN_NUM_PEAKS # must have at least min num peaks many peaks 
-    allPeaks = sorted([(f,m) for (m,f) in allPeaks[cutoffI:]])
+    # allPeaks = sorted([(m,f) for (f,m) in allPeaks])
+    # cutoffMag = allPeaks[len(allPeaks) - 1][0] *.85
+    # cutoffI = 0
+    # while cutoffI < len(allPeaks) and allPeaks[cutoffI][0] < cutoffMag:
+    #     cutoffI += 1
+    # if cutoffI >= len(allPeaks) - NUM_PEAKS + 1: cutoffI = len(allPeaks) - NUM_PEAKS # must have at least num peaks many peaks 
+    # allPeaks = sorted([(f,m) for (m,f) in allPeaks[cutoffI:]])
+    # return topPeaks
+
+
     if debug:
         plt.clf()
         plt.plot([f for (f,m) in allPeaks], [m for (f,m) in allPeaks])
         plt.show()
-    # return allPeaks
-
-
 
     dists = []
     for i in range(1, len(allPeaks)):
         dist = abs(allPeaks[i][0] - allPeaks[i - 1][0])
         dists.append((dist,i))
 
-    indicesToSplit = sorted([j for (d,j) in sorted(dists)[len(dists) - MAX_NUM_PEAKS + 1:]])
-    if debug: print sorted(dists)#[len(dists) - MAX_NUM_PEAKS + 1:]
+    indicesToSplit = sorted([j for (d,j) in sorted(dists)[len(dists) - NUM_PEAKS + 1:]])
+    if debug: print sorted(dists)[len(dists) - NUM_PEAKS + 1:]
     if debug: print indicesToSplit, [(allPeaks[i-1], allPeaks[i]) for i in indicesToSplit]
 
     groups = []
@@ -132,17 +130,16 @@ def convertToDict(folderName, debug = False):
                 data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
     return condenseData(data, debug)
 
-def writeFingerprints(trainingData, path):
-    # stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])
-    stringToWrite = "\n".join([key + "," + str(value) for (key, value) in trainingData.items()])
-    writeFile(path, stringToWrite)
+def writeFingerprints(trainingData):
+    stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])
+    writeFile(FINGERPRINT_FILE_PATH, stringToWrite)
 
-def readFingerprints(path):
-    rawString = readFile(path)
+def readFingerprints():
+    rawString = readFile(FINGERPRINT_FILE_PATH)
     fingerprints = dict()
     for line in rawString.splitlines():
         line = line.split(",")
-        fingerprints[line[0]] = float(line[1])
+        fingerprints[line[0]] = [(float(line[i]), float(line[i+1])) for i in range(1,len(line),2)]
     return fingerprints
 
 def fingerprint(fillLevelNames, debug = False):

@@ -2,8 +2,6 @@
 
 import os
 import sys
-import classifySample
-import fingerprinter as fp
 import numpy as np
 import datetime
 import visualizer
@@ -11,13 +9,14 @@ import visualizer
 FRONT_END_JSON_PATH   = "../public/json/currentFill.json"
 FRONT_END_JSON_TIME_PATH = "../public/json/allPrevFills"
 UNKNOWN_DATA_PATH     = "../data/UNKNOWN/"
+FINGERPRINT_FILE_PATH = "../fingerprintData/fingerprints.csv"
 FROZEN_DATA_FILE_NAME = "frozenVoltages"
 
 FILL_PERCENTAGES = {
-                    # 'EMPTY'         : 0,
+                    'EMPTY'         : 0,
                     'QUARTER'       : 25,
                     'HALF'          : 50,
-                    'THREE_Q'       : 75,
+                    # 'THREE_Q'       : 75,
                     'FULL'          : 100
                     }
 # requires that each of the keys of FILL_PERCENTAGES exist as files in 
@@ -33,10 +32,10 @@ def writeFile(path, text):
 
 def writeToFrontEnd(label, percentage):
     contentsToWrite = '{"containerID" : %d,\n"fillLevel" : %d,\n"currentTime" : "%s"}'%(1,percentage,datetime.datetime.now())
-    writeFile(FRONT_END_JSON_PATH, contentsToWrite)
+    writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_PATH, contentsToWrite)
 
 def writeToFrontEndTime(percentage, time, debug = False):
-    prevData = readFile(FRONT_END_JSON_TIME_PATH).splitlines() if os.path.exists(FRONT_END_JSON_TIME_PATH) else []
+    prevData = readFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH).splitlines() if os.path.exists(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH) else []
     if prevData == []: prevData = ["",""] # happens when file does not exist or is empty
     if debug: print "prev data", prevData
     timeValues = [float(x) for x in prevData[0].split(",") if x != ''] + [time.minute + time.second * 1.0/60]
@@ -47,12 +46,12 @@ def writeToFrontEndTime(percentage, time, debug = False):
     visualizer.createPrevFillLevelGraph(timeValues, fillLevels)
 
 def clearUnknownDataFiles():
-    for filename in os.listdir(UNKNOWN_DATA_PATH):
+    for filename in os.listdir(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH):
         if filename == FROZEN_DATA_FILE_NAME: continue
-        writeFile(UNKNOWN_DATA_PATH + os.sep + filename, "")
+        writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename, "")
 
 def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100, halfDiff=0):
-    if not os.path.exists(fp.FINGERPRINT_FILE_PATH):
+    if not os.path.exists():
         fp.fingerprint(FILL_PERCENTAGES.keys())
     fingerprints = fp.readFingerprints()
 
@@ -60,35 +59,36 @@ def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug 
     allData = []
     for data in amplitudeDataSets:
         allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
-    fill = classifySample.classify(fp.condenseData(allData), fingerprints, sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, ratio = ratio, debug = debug, halfDiff = halfDiff)
+    fill = cs.classify(fp.condenseData(allData), fingerprints, sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, ratio = ratio, debug = debug, halfDiff = halfDiff)
 
     return fill[0]
 
-def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100):
-    if not os.path.exists(fp.FINGERPRINT_FILE_PATH):
-        fp.fingerprint(FILL_PERCENTAGES.keys())
-    fingerprints = fp.readFingerprints()
+def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .23):
+    fingerprintPath = SCRIPT_PATH + os.sep + FINGERPRINT_FILE_PATH
+    if not os.path.exists(fingerprintPath):
+        fp.fingerprint(FILL_PERCENTAGES.keys(), fingerprintPath)
+    fingerprints = fp.readFingerprints(fingerprintPath)
 
     allData = []
-    files = os.listdir(UNKNOWN_DATA_PATH)
+    files = os.listdir(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH)
 
     # fresh data?
     if len(files) == 0:
         if debug: print "ERROR: No unknkown data files or previous saved data.  Cannot perform analysis."
         return # no data available for analysis
-    elif len(files) == 1 or len(readFile(UNKNOWN_DATA_PATH + os.sep + "output06000")) == 0:
+    elif len(files) == 1 or len(readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + "output06000")) == 0:
         if debug: print "no fresh data"
         # no fresh data, just read from frozen data
-        allData = [float(x) for x in readFile(UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME).splitlines()]
+        allData = [float(x) for x in readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME).splitlines()]
     else:
         # fresh data!  need to reclassify
         if debug: print "fresh data"
         for filename in files:
             if filename == FROZEN_DATA_FILE_NAME: continue
-            fileData = readFile(UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
+            fileData = readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
             allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
 
-    fill = classifySample.classify(fp.condenseData(allData), fingerprints, 
+    fill = cs.classify(fp.condenseData(allData), fingerprints, 
         sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, 
         ratio = ratio, debug = debug)
 
@@ -102,12 +102,24 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 10
 
     # we write the values again, so that we can recompute even if we do not have 
     # new data
-    writeFile(UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
+    writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
 
-if len(sys.argv) > 1:
+if len(sys.argv) == 3:
     print(sys.argv)
-    debug = bool(sys.argv[0])
+    scriptPath = os.path.dirname(sys.argv[0])
+    DO_KEG = bool(sys.argv[1])
+    debug = bool(sys.argv[2])
 else:
+    SCRIPT_PATH = "."
+    DO_KEG = True
     debug = True
 
+if DO_KEG:
+    import classifySample as cs
+    import fingerprinter as fp
+else:
+    import wb_classifySample as cs
+    import wb_fingerprinter as fp
+
 rawToFillLive(debug = debug)
+

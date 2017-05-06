@@ -20,9 +20,9 @@ def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, half
     sampleSize = rawToFill.fp.SAMPLE_SIZE
     fillLevels = [f for (p,f) in sorted([(p,f) for (f,p) in rawToFill.FILL_PERCENTAGES.items()])]
     for trial in range(trials):
-        if trials > largeNumTrialsThreshold and trial == trials / 4: print "25%...", count/trial, close/trial
-        elif trials > largeNumTrialsThreshold and trial == trials / 2: print "50%...", count/trial, close/trial
-        elif trials > largeNumTrialsThreshold and trial == trials * 3 / 4: print "75%...", count/trial, close/trial
+        if trials > largeNumTrialsThreshold and trial == trials / 4: print "25%...", 1.0*count/trial, close/trial
+        elif trials > largeNumTrialsThreshold and trial == trials / 2: print "50%...", 1.0*count/trial, close/trial
+        elif trials > largeNumTrialsThreshold and trial == trials * 3 / 4: print "75%...", 1.0*count/trial, close/trial
         fillLevel = random.choice(fillLevels)
         if debug: print "\nAnswer:", fillLevel
         rawSampleDir = "../data/" + fillLevel
@@ -33,7 +33,7 @@ def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, half
             start = random.randint(0,len(rawSampleString)/sampleSize - 1)
             rawSample = rawSampleString[start*sampleSize:(start + 1)*sampleSize]
             data.append(rawSample)
-        if debug: visualizer.visualizeSampleWithFingerprints(data, sampleMagMult = magMult, sampleMagAdd = magAdd)
+        # if debug: visualizer.visualizeSampleWithFingerprints(data, sampleMagMult = magMult, sampleMagAdd = magAdd)
         guess = rawToFill.rawToFillTest(data, ratio = ratio, sampleMagMult = magMult, sampleMagAdd = magAdd, debug = debug, halfDiff=halfDiff)
         if debug: print "guess: ", guess
         guesses[guess] = guesses.get(guess, 0) + 1
