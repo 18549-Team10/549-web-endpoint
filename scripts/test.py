@@ -9,7 +9,7 @@ def readFile(path):
     with open(path, "rt") as f:
         return f.read()
 
-def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False):
+def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False, halfDiff=7500):
     if debug: print "testing " + str(trials) + " trials.."
     largeNumTrialsThreshold = 50
     correct = 0
@@ -34,7 +34,7 @@ def test(trials = 100, ratio = 100, magMult = 1, magAdd = 0, debug = False):
             rawSample = rawSampleString[start*sampleSize:(start + 1)*sampleSize]
             data.append(rawSample)
         if debug: visualizer.visualizeSampleWithFingerprints(data, sampleMagMult = magMult, sampleMagAdd = magAdd)
-        guess = rawToFill.rawToFillTest(data, ratio = ratio, sampleMagMult = magMult, sampleMagAdd = magAdd, debug = debug)
+        guess = rawToFill.rawToFillTest(data, ratio = ratio, sampleMagMult = magMult, sampleMagAdd = magAdd, debug = debug, halfDiff=halfDiff)
         if debug: print "guess: ", guess
         guesses[guess] = guesses.get(guess, 0) + 1
         if guess == fillLevel:
