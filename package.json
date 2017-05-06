@@ -22,5 +22,8 @@
     "jimp": "~0.2.27",
     "python-shell": "~0.4.0",
     "express-handlebars": "^3.0.0"
+  },
+  "devDependencies": {
+    "moment": "^2.18.1"
   }
 }

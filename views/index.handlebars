@@ -122,23 +122,8 @@
                                Account
                             </a>
                         </li>
-                        <li class="dropdown">
-                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    Dropdown
-                                    <b class="caret"></b>
-                              </a>
-                              <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                              </ul>
-                        </li>
                         <li>
-                            <a href="#">
+                            <a href="/sign-out">
                                 Log out
                             </a>
                         </li>
@@ -153,12 +138,12 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card">
-                            <div class="header">
+                            <div class="header" style="text-align: center">
                                 <h4 class="title">Container Statistics</h4>
-                                <p class="category">Last Measurement</p>
+                                <div id="json-data" style="text-align: center"></div>
                             </div>
                             <div class="content">
-                            	<div id="json-data"></div>
+                                <div id="fill-img" style="text-align: center"></div>
                                 <div class="footer">
                                     <hr>
                                     <div class="stats">
@@ -171,9 +156,9 @@
 
                     <div class="col-md-8">
                         <div class="card">
-                            <div class="header">
+                            <div class="header" style="text-align: center">
                                 <h4 class="title">Container Levels Over Time</h4>
-                                <p class="category">Graph goes here</p>
+                                <p class="category"><img src="/img/prev_fill_level_graph.png" style="max-height: 400px; max-width: 550px;"></p>
                             </div>
                             <div class="content">
                                 <div class="footer">
@@ -281,20 +266,23 @@
             getJSONFile();
         });
 
-               function findValues() {
-           var myList;
-           $.getJSON('/json/currentFill.json').done(function (data) {
-               myList = data;
-               var jsonData = document.getElementById("json-data");
-               jsonData.innerHTML += "Container ID = ";
-               jsonData.innerHTML += data.containerID;
-               jsonData.innerHTML += "<br>";
-               jsonData.innerHTML += "Fill Level =";
-               jsonData.innerHTML += data.fillLevel;
-               jsonData.innerHTML += "<br>";
-               console.log(data);
-           });
-       }
+        function getImageByFillLevel(fillLevel) {
+            if (fillLevel == 0) {
+                return "<img src='/img/empty-keg.jpg' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 25) {
+                return "<img src='/img/quarter-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 50) {
+                return "<img src='/img/half-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 75) {
+                return "<img src='/img/three-quarter-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 100) {
+                return "<img src='/img/full-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+        }
 
         function getJSONFile() {
             var myList;
@@ -306,10 +294,11 @@
                 jsonData.innerHTML += "<br>";
                 jsonData.innerHTML += "Fill Level = ";
                 jsonData.innerHTML += data.fillLevel;
-                jsonData.innerHTML += "<br>";
+                jsonData.innerHTML += "%<br>";
+                var fillImg = document.getElementById("fill-img");
+                fillImg.innerHTML += getImageByFillLevel(data.fillLevel);
                 var lastModified = document.getElementById("current-time");
                 lastModified.innerHTML += data.currentTime;
             });
-
         }
     </script>
