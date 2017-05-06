@@ -19,7 +19,7 @@ FILL_PERCENTAGES = {
                     # 'THREE_Q'       : 75,
                     'FULL'          : 100
                     }
-# requires that each of the keys of FILL_PERCENTAGES exist as files in 
+# requires that each of the keys of FILL_PERCENTAGES exist as files in
 # ../fingerprints
 
 def readFile(path):
@@ -88,25 +88,25 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
             fileData = readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
             allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
 
-    fill = cs.classify(fp.condenseData(allData), fingerprints, 
-        sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, 
+    fill = cs.classify(fp.condenseData(allData), fingerprints,
+        sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
         ratio = ratio, debug = debug)
 
     if debug: print "fill", fill
-    
+
     writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
     writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
-    # we clear the files so that the cc3200 can keep appending to them, 
+    # we clear the files so that the cc3200 can keep appending to them,
     # rather than needing to overwrite them
     clearUnknownDataFiles()
 
-    # we write the values again, so that we can recompute even if we do not have 
+    # we write the values again, so that we can recompute even if we do not have
     # new data
     writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
 
 if len(sys.argv) == 3:
     print(sys.argv)
-    scriptPath = os.path.dirname(sys.argv[0])
+    SCRIPT_PATH = os.path.dirname(sys.argv[0])
     DO_KEG = bool(sys.argv[1])
     debug = bool(sys.argv[2])
 else:
