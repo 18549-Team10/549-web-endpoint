@@ -45,6 +45,9 @@ def writeToFrontEndTime(percentage, time, debug = False):
     writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH, contentsToWrite)
     visualizer.createPrevFillLevelGraph(timeValues, fillLevels, SCRIPT_PATH)
 
+    jsonContentsToWrite = '{ '+str(timeValues) + '\n''}'
+    writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH + ".json", jsonContentsToWrite)
+
 def clearUnknownDataFiles(debug):
     if debug: print "clearing files!"
     for filename in os.listdir(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH):
@@ -65,7 +68,8 @@ def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug 
     return fill[0]
 
 def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .23):
-    fingerprintPath = SCRIPT_PATH + os.sep + FINGERPRINT_FILE_PATH
+    fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
+    fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
         fp.fingerprint(FILL_PERCENTAGES.keys(), fingerprintPath)
     fingerprints = fp.readFingerprints(fingerprintPath)
@@ -108,8 +112,8 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
 if len(sys.argv) == 3:
     print(sys.argv)
     SCRIPT_PATH = os.path.dirname(sys.argv[0])
-    DO_KEG = bool(sys.argv[1])
-    debug = bool(sys.argv[2])
+    DO_KEG = bool(int(sys.argv[1]))
+    debug = bool(int(sys.argv[2]))
 else:
     print "correct usage: script_path do_keg debug"
     SCRIPT_PATH = "."
@@ -117,9 +121,11 @@ else:
     debug = True
 
 if DO_KEG:
+    print "keg!", sys.argv[1]
     import classifySample as cs
     import fingerprinter as fp
 else:
+    print "waterbottle.", sys.argv[1]
     import wb_classifySample as cs
     import wb_fingerprinter as fp
 
