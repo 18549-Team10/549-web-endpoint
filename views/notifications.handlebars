@@ -54,14 +54,8 @@
                         <p>Containers</p>
                     </a>
                 </li>
-                <li>
-                    <a href="/statistics">
-                        <i class="fa fa-bar-chart"></i>
-                        <p>Statistics</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/notifications" class="active">
+                <li class="active">
+                    <a href="/notifications">
                         <i class="pe-7s-bell"></i>
                         <p>Notifications</p>
                     </a>
@@ -89,28 +83,7 @@
                     <a class="navbar-brand" href="#">Notifications</a>
                 </div>
                 <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li class="dropdown">
-                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-globe"></i>
-                                    <b class="caret"></b>
-                                    <span class="notification">4</span>
-                              </a>
-                              <ul class="dropdown-menu">
-                                <li><a href="#">Keg Fill Level at 25%! (2 min ago)</a></li>
-                                <li><a href="#">Keg Fill Level at 50%! (2 hr ago)</a></li>
-                                <li><a href="#">Keg Fill Level at 75%! (3 hr ago)</a></li>
-                                <li><a href="#">Keg Fill Level at 100%! (4 hr ago)</a></li>
-                              </ul>
-                        </li>
-                    </ul>
-
                     <ul class="nav navbar-nav navbar-right">
-                        <li>
-                           <a href="">
-                               Account
-                            </a>
-                        </li>
                         <li>
                             <a href="/sign-out">
                                 Log out
@@ -241,7 +214,7 @@
                     var cell3 = row.insertCell(2);
                     cell1.innerHTML = data.containerID[i].toString();
                     cell2.innerHTML = data.fillLevel[i].toString() + "%";
-                    cell3.innerHTML = moment(data.currentTime[i].toString()).format('LLLL');                    
+                    cell3.innerHTML = moment(data.currentTime[i]).format('LLLL');                    
                 }
                 //var lastModified = document.getElementById("current-time");
                 //lastModified.innerHTML += data.currentTime;

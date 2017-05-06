@@ -38,6 +38,10 @@ app.get('/about-us', function(req, res) {
 	res.render('about-us');
 });
 
+app.get('/my-profile', function(req, res) {
+	res.render('my-profile');
+})
+
 app.get('/sign-out', function(req, res) {
 	res.render('sign-out');
 });
