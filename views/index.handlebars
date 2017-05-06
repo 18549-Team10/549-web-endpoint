@@ -27,6 +27,7 @@
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="css/pe-icon-7-stroke.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -109,11 +110,6 @@
                                 <li><a href="#">Keg Fill Level at 100%! (4 hr ago)</a></li>
                               </ul>
                         </li>
-                        <li>
-                           <a href="">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        </li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -122,23 +118,8 @@
                                Account
                             </a>
                         </li>
-                        <li class="dropdown">
-                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    Dropdown
-                                    <b class="caret"></b>
-                              </a>
-                              <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                              </ul>
-                        </li>
                         <li>
-                            <a href="#">
+                            <a href="/sign-out">
                                 Log out
                             </a>
                         </li>
@@ -153,12 +134,12 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card">
-                            <div class="header">
+                            <div class="header" style="text-align: center">
                                 <h4 class="title">Container Statistics</h4>
-                                <p class="category">Last Measurement</p>
                             </div>
                             <div class="content">
-                            	<div id="json-data"></div>
+                                <div id="fill-img" style="text-align: center"></div>
+                                <h4 class="title"><div id="json-data" style="text-align: center"></div></h4>
                                 <div class="footer">
                                     <hr>
                                     <div class="stats">
@@ -171,9 +152,9 @@
 
                     <div class="col-md-8">
                         <div class="card">
-                            <div class="header">
+                            <div class="header" style="text-align: center">
                                 <h4 class="title">Container Levels Over Time</h4>
-                                <p class="category">Graph goes here</p>
+                                <p class="category"><img src="/img/prev_fill_level_graph.png" style="max-height: 350px; max-width: 525px;"></p>
                             </div>
                             <div class="content">
                                 <div class="footer">
@@ -184,7 +165,7 @@
                                     </div>
                                     <hr>
                                     <div class="stats">
-                                        <i class="fa fa-history"></i> Updated 3 minutes ago
+                                        <i class="fa fa-history"></i> Updated on: <div id="current-time2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -192,31 +173,6 @@
                     </div>
                 </div>
 
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="header">
-                                <h4 class="title">More Information</h4>
-                            </div>
-                            <div class="content">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="header">
-                                <h4 class="title">Container Tracker</h4>
-                                <p class="category">Keeping track of all your containers</p>
-                                <img src="img/mini-keg.jpg" style="max-height:200px;max-width:150px;">
-                            </div>
-                            <div class="content">
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -232,7 +188,7 @@
                         </li>
                         <li>
                             <a href="/about-us">
-                                About StreamFi
+                               About StreamFi
                             </a>
                         </li>
                         <li>
@@ -281,20 +237,23 @@
             getJSONFile();
         });
 
-               function findValues() {
-           var myList;
-           $.getJSON('/json/currentFill.json').done(function (data) {
-               myList = data;
-               var jsonData = document.getElementById("json-data");
-               jsonData.innerHTML += "Container ID = ";
-               jsonData.innerHTML += data.containerID;
-               jsonData.innerHTML += "<br>";
-               jsonData.innerHTML += "Fill Level =";
-               jsonData.innerHTML += data.fillLevel;
-               jsonData.innerHTML += "<br>";
-               console.log(data);
-           });
-       }
+        function getImageByFillLevel(fillLevel) {
+            if (fillLevel == 0) {
+                return "<img src='/img/empty-keg.jpg' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 25) {
+                return "<img src='/img/quarter-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 50) {
+                return "<img src='/img/half-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 75) {
+                return "<img src='/img/three-quarter-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+            else if (fillLevel == 100) {
+                return "<img src='/img/full-keg.png' style='max-width:200px; max-height:200px;'>";
+            }
+        }
 
         function getJSONFile() {
             var myList;
@@ -306,10 +265,13 @@
                 jsonData.innerHTML += "<br>";
                 jsonData.innerHTML += "Fill Level = ";
                 jsonData.innerHTML += data.fillLevel;
-                jsonData.innerHTML += "<br>";
+                jsonData.innerHTML += "%<br>";
+                var fillImg = document.getElementById("fill-img");
+                fillImg.innerHTML += getImageByFillLevel(data.fillLevel);
                 var lastModified = document.getElementById("current-time");
-                lastModified.innerHTML += data.currentTime;
+                var lastModified2 = document.getElementById("current-time2");
+                lastModified.innerHTML += moment(data.currentTime).format('LLLL');
+                lastModified2.innerHTML += moment(data.currentTime).format('LLLL');
             });
-
         }
     </script>

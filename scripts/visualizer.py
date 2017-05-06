@@ -132,7 +132,7 @@ def createPrevFillLevelGraph(timeData, fillLevels):
     plt.ylabel('Fill (%)')
     plt.title('Fill Level Over Time')
     plt.grid(True)
-    plt.savefig(graphDir + os.path.sep + "prev_fill_level_graph.png")
+    plt.savefig(".." + os.sep + "public" + os.sep + "img" + os.path.sep + "prev_fill_level_graph.png")
 
 if len(sys.argv) > 1:
     print(sys.argv)
