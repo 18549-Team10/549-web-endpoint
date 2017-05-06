@@ -16,7 +16,7 @@ FILL_PERCENTAGES = {
                     'EMPTY'         : 0,
                     'QUARTER'       : 25,
                     'HALF'          : 50,
-                    # 'THREE_Q'       : 75,
+                    'THREE_Q'       : 75,
                     'FULL'          : 100
                     }
 # requires that each of the keys of FILL_PERCENTAGES exist as files in
@@ -37,11 +37,11 @@ def writeToFrontEnd(label, percentage):
 def writeToFrontEndTime(percentage, time, debug = False):
     prevData = readFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH).splitlines() if os.path.exists(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH) else []
     if prevData == []: prevData = ["",""] # happens when file does not exist or is empty
-    if debug: print "prev data", prevData
+    # if debug: print "prev data", prevData
     timeValues = [float(x) for x in prevData[0].split(",") if x != ''] + [time.minute + time.second * 1.0/60]
     fillLevels = [int(x) for x in prevData[1].split(",") if x != ''] + [percentage]
     contentsToWrite = ",".join([str(x) for x in timeValues]) + "\n" + ",".join([str(x) for x in fillLevels])
-    if debug: print contentsToWrite
+    # if debug: print contentsToWrite
     writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH, contentsToWrite)
     visualizer.createPrevFillLevelGraph(timeValues, fillLevels, SCRIPT_PATH)
 
@@ -107,14 +107,16 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
             fileData = readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
             allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
 
+    if debug: "len of all data", len(allData)
     fill = cs.classify(fp.condenseData(allData), fingerprints,
         sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
         ratio = ratio, debug = debug)
 
     if debug: print "fill", fill
 
-    writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
-    writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
+    if fill[0] in FILL_PERCENTAGES:
+        writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
+        writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
     # we clear the files so that the cc3200 can keep appending to them,
     # rather than needing to overwrite them
     clearUnknownDataFiles(debug)
