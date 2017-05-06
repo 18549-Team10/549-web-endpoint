@@ -27,24 +27,24 @@ const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNK
 var options = {
   mode: 'text',
   scriptPath: appRoot + '/scripts/',
-  args: [""]
+  args: ["0", "1"] //keg, debug
 };
 
 function processPythonRun (fillLevel, err, results) {
-  console.log('hi');
   if(os.platform() == 'win32') return;
   if (err) throw err;
   // results is an array consisting of messages collected during execution
-  console.log('results: %j', results);
+  //console.log('results: %j', results);
+  results.forEach(line => console.log(line));
   fs.readdir(graphDirectory + path.sep + fillLevel, function(err, items) {
     items = items.filter((f) => fs.statSync(graphDirectory + path.sep + fillLevel + path.sep + f).isFile());
     if (items.length > 0){
-      spawn("eog", [graphDirectory + path.sep + fillLevel + path.sep + items[0]]);
+      //spawn("eog", [graphDirectory + path.sep + fillLevel + path.sep + items[0]]);
     }
   });
 }
 
-//PythonShell.run('visualizer.py', options, (err,results) => processPythonRun("", err, results));
+//PythonShell.run('rawToFill.py', options, (err,results) => processPythonRun("", err, results));
 
 function convertData(data){
   return ((data >> 2) && 0xFFF);
@@ -75,7 +75,6 @@ server.on('message', (msg, rinfo) => {
   //Full path to data
 
   var dataPath = dataTarget + path.sep + dataFilename;
-  options.args[0] = fillLevel;
 
   if (!fs.existsSync(dataDirectory)){
     fs.mkdirSync(dataDirectory);
@@ -88,9 +87,9 @@ server.on('message', (msg, rinfo) => {
     if(err) {
       return console.log(err);
     }
-    console.log("The file was saved!");
     if(chunk == lastChunk && frequency == lastFrequency && fillLevel == "UNKNOWN"){
       iterationsSeen+=1;
+      console.log("Last chunk %d of 8", iterationsSeen);
       if(iterationsSeen == 8){
         iterationsSeen = 0;
         PythonShell.run('rawToFill.py', options,
