@@ -68,7 +68,8 @@ def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug 
     return fill[0]
 
 def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .23):
-    fingerprintPath = SCRIPT_PATH + os.sep + FINGERPRINT_FILE_PATH
+    fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
+    fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
         fp.fingerprint(FILL_PERCENTAGES.keys(), fingerprintPath)
     fingerprints = fp.readFingerprints(fingerprintPath)

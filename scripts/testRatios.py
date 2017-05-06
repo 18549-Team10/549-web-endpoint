@@ -18,7 +18,7 @@ def testRatios(numTrials = 100):
     #     allRatios.append(score)
     #     if bestScore == None or score > bestScore:
     #         bestRatio, bestScore = ratio, score
-    for ratio in frange(0.18,0.23, 0.005):
+    for ratio in frange(0.8,0.25, 0.01):
         score = test.test(numTrials,ratio = ratio)
         allRatios.append(score)
         if bestScore == None or score > bestScore:
