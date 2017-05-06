@@ -42,7 +42,7 @@ def writeToFrontEndTime(percentage, time, debug = False):
     fillLevels = [int(x) for x in prevData[1].split(",") if x != ''] + [percentage]
     contentsToWrite = ",".join([str(x) for x in timeValues]) + "\n" + ",".join([str(x) for x in fillLevels])
     if debug: print contentsToWrite
-    writeFile(FRONT_END_JSON_TIME_PATH, contentsToWrite)
+    writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH, contentsToWrite)
     visualizer.createPrevFillLevelGraph(timeValues, fillLevels)
 
 def clearUnknownDataFiles(debug):
