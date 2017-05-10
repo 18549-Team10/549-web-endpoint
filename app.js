@@ -18,7 +18,7 @@ const frequencyIndex = 0;
 const chunkIndex = 1;
 const fillIndex = 2;
 const lastChunk = 3;
-const lastFrequency = 6000;
+const lastFrequency = 31000;
 const firstChunk = 0;
 const firstFrequency = 10000;
 var iterationsSeen = 0;
@@ -27,7 +27,7 @@ const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNK
 var options = {
   mode: 'text',
   scriptPath: appRoot + '/scripts/',
-  args: ["0", "1"] //keg, debug
+  args: ["1", "1"] //keg, debug
 };
 
 function processPythonRun (fillLevel, err, results) {
