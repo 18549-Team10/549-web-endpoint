@@ -3,3 +3,5 @@
 node_modules
 npm-debug.log
 graphs/*
+public/json/currentFill.json
+public/json/allPrevFills
