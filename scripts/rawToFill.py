@@ -138,27 +138,29 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
 
     # we write the values again, so that we can recompute even if we do not have
     # new data
-    # writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
 
-# if len(sys.argv) == 3:
-#     print(sys.argv)
-#     SCRIPT_PATH = os.path.dirname(sys.argv[0])
-#     DO_KEG = bool(int(sys.argv[1]))
-#     debug = bool(int(sys.argv[2]))
-# else:
-#     print "correct usage: script_path do_keg debug"
-SCRIPT_PATH = "."
-DO_KEG = True
-#     debug = True
+    writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
 
-# if DO_KEG:
-#     print "keg!", sys.argv[1]
-import classifySample as cs
-import fingerprinter as fp
-debug = False
-# else:
-#     print "waterbottle.", sys.argv[1]
-#     import wb_classifySample as cs
-#     import wb_fingerprinter as fp
+if len(sys.argv) == 3:
+    print(sys.argv)
+    SCRIPT_PATH = os.path.dirname(sys.argv[0])
+    DO_KEG = bool(int(sys.argv[1]))
+    debug = bool(int(sys.argv[2]))
+elif len(sys.argv) == 0:
+    DO_KEG = True
+    debug = False
+    SCRIPT_PATH = "."
+else:
+    print "correct usage: script_path do_keg debug"
+    SCRIPT_PATH = "."
+    DO_KEG = True
+    debug = True
 
-# rawToFillLive(debug = debug)
+if DO_KEG:
+    import classifySample as cs
+    import fingerprinter as fp
+else:
+    import wb_classifySample as cs
+    import wb_fingerprinter as fp
+
+rawToFillLive(debug = debug)

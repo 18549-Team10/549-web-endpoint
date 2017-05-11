@@ -147,5 +147,5 @@ if len(sys.argv) > 1:
 else:
     graphDir = "../graphs"
     scriptDir = "."
-#     # getDataAndVisualize()
-#     fingerprintVisualize()
+    getDataAndVisualize()
+    fingerprintVisualize()

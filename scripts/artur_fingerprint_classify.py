@@ -52,16 +52,14 @@ def condenseData(data, debug = False):
     return [f for (f,m) in topPeaks] + [m for (f,m) in topPeaks]
 
 def convertToDict(locationDir, trainingData, debug = False):
-    for folder in os.listdir(locationDir):
-        print "folder", folder
-        fillFolder = locationDir + os.sep + folder
-        for file in os.listdir(fillFolder):
-            data = []
-            dataString = readFile(fillFolder + os.sep + file)
-            for row in dataString.splitlines():
-                if row.isdigit():
-                    data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
-            trainingData.append([folder, file] + condenseData(data, debug))
+    for fname in os.listdir(locationDir):
+        data = []
+        dataString = readFile(locationDir + os.sep + fname)
+        print locationDir + os.sep + fname
+        for row in dataString.splitlines():
+            if row.isdigit():
+                data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
+        trainingData.append([locationDir, fname] + condenseData(data, debug))
     return trainingData
 
 def writeFingerprints(trainingData, path):
@@ -85,10 +83,10 @@ def writeFingerprints(trainingData, path):
 def artur_fingerprint(fillLevelNames, path, debug = False):
     print "fingerprinting.."
     trainingData = []
-    for location in os.listdir("../big_data/"):
-        convertToDict("../big_data/" + location, trainingData, debug)
+    for location in os.listdir("../data/"):
+        convertToDict("../data/" + location, trainingData, debug)
         print "done with " + location
     print trainingData
     writeFingerprints(trainingData, path)
 
-artur_fingerprint(['EMPTY', 'QUARTER', 'HALF', 'THREE_Q', 'FULL', 'UNKNOWN'], "../fingerprintData/artur_fingerprints.csv")
+artur_fingerprint(['UNKNOWN'], "../fingerprintData/unknown.csv")
