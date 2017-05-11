@@ -4,7 +4,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import fingerprinter as fp
+import wb_fingerprinter as fp
 
 def visualizeFreq(sampleData, dataLabels, graphDir):
     handles = []
@@ -75,19 +75,20 @@ def getDataAndVisualize(dataDir = "../data/", graphDir = "../graphs"):
     print("visualizing in " + graphDir)
     if not os.path.isdir(graphDir):
         os.mkdir(graphDir)
-    # visualizeTimeOrderedData(data, dataLabels, graphDir)
+    visualizeTimeOrderedData(data, dataLabels, graphDir)
     visualizeFreq(data, dataLabels, graphDir)
     print("done!")
 
-def fingerprintVisualize():
+def fingerprintVisualize(scriptPath = "."):
     plt.clf()
-    fingerprints = fp.readFingerprints(scriptPath + os.sep + "../fingerprintData/fingerprints.csv")
+    fingerprints = fp.readFingerprints(scriptPath + os.sep + "../fingerprintData/wb_fingerprints_no_chunking.csv")
     dataLabels = []
     handles = []
     for fingerprint in fingerprints:
         x = [f for (f,m) in fingerprints[fingerprint]]
         y = [m for (f,m) in fingerprints[fingerprint]]
-        handle, = plt.plot(x,y)
+        newX, newY = [x[i/3] for i in range(3*len(x))], [0 if (i-1)%3 else y[(i-1)/3] for i in range(3*len(y))]
+        handle, = plt.plot(newX,newY)
         handles.append(handle)
         dataLabels.append(fingerprint)
     plt.xlabel('Freq')

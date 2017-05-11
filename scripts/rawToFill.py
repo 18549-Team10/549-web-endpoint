@@ -30,7 +30,14 @@ def writeFile(path, text):
     with open(path, "wt") as f:
         f.write(text)
 
-def writeToFrontEnd(label, percentage):
+def avg(l):
+    if (len(l) > 0):
+        return (sum(l)/len(l))
+    else:
+        print "empty list"
+        return None
+
+def writeToFrontEnd(percentage):
     contentsToWrite = '{"containerID" : %d,\n"fillLevel" : %d,\n"currentTime" : "%s"}'%(1,percentage,datetime.datetime.now())
     writeFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_PATH, contentsToWrite)
 
@@ -64,7 +71,7 @@ def clearUnknownDataFiles(debug):
         if filename == FROZEN_DATA_FILE_NAME: continue
         writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename, "")
 
-def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100, halfDiff=0):
+def rawToFillTest(data, playFreq, sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 100, halfDiff=0):
     fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
     fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
@@ -72,14 +79,13 @@ def rawToFillTest(amplitudeDataSets, sampleMagMult = 1, sampleMagAdd = 0, debug 
     fingerprints = fp.readFingerprints(fingerprintPath)
 
     peaks = []
-    allData = []
-    for data in amplitudeDataSets:
-        allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data))
-    fill = cs.classify(fp.condenseData(allData), fingerprints, sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd, ratio = ratio, debug = debug, halfDiff = halfDiff)
+    voltageData = map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data)
+    fills = cs.classify(fp.condenseData(voltageData), 
+                {fill : fingerprints[fill].get(playFreq, []) for fill in fingerprints},
+                sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
+                ratio = ratio, debug = debug)
 
-    writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
-
-    return fill[0]
+    return fills
 
 def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .23):
     fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
@@ -98,51 +104,61 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .2
     elif len(files) == 1 or len(readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + "output06000")) == 0:
         if debug: print "no fresh data"
         # no fresh data, just read from frozen data
-        allData = [float(x) for x in readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME).splitlines()]
+        return
+        # allData = [float(x) for x in readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME).splitlines()]
     else:
         # fresh data!  need to reclassify
         if debug: print "fresh data"
+        fills = dict()
         for filename in files:
+            if debug: print filename
             if filename == FROZEN_DATA_FILE_NAME: continue
             fileData = readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
-            allData.extend(map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
+            data = (map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
+            matchFills = cs.classify(fp.condenseData(data), 
+                {fill : fingerprints[fill].get(filename, []) for fill in fingerprints},
+                sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
+                ratio = ratio, debug = debug)
+            for fill in matchFills: fills[fill] = fills.get(fill, 0) + 1
+            if debug: print fills
 
-    if debug: "len of all data", len(allData)
-    fill = cs.classify(fp.condenseData(allData), fingerprints,
-        sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
-        ratio = ratio, debug = debug)
+        bestFill, bestNumMatches = [], 0
+        for fill in fills:
+            if fills[fill] > bestNumMatches:
+                bestFill, bestNumMatches = [fill], fills[fill]
+            elif fills[fill] == bestNumMatches:
+                bestFill.append(fill)
 
-    if debug: print "fill", fill
-
-    if fill[0] in FILL_PERCENTAGES:
-        writeToFrontEnd(fill, FILL_PERCENTAGES.get(fill[0], None))
-        writeToFrontEndTime(FILL_PERCENTAGES.get(fill[0], None), datetime.datetime.now(), debug)
+        percent = avg([FILL_PERCENTAGES.get(fill, 0) for fill in bestFill])
+        writeToFrontEnd(percent)
+        writeToFrontEndTime(percent, datetime.datetime.now(), debug)
     # we clear the files so that the cc3200 can keep appending to them,
     # rather than needing to overwrite them
     clearUnknownDataFiles(debug)
 
     # we write the values again, so that we can recompute even if we do not have
     # new data
-    writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
+    # writeFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + FROZEN_DATA_FILE_NAME, "\n".join([str(x) for x in allData]))
 
-if len(sys.argv) == 3:
-    print(sys.argv)
-    SCRIPT_PATH = os.path.dirname(sys.argv[0])
-    DO_KEG = bool(int(sys.argv[1]))
-    debug = bool(int(sys.argv[2]))
-else:
-    print "correct usage: script_path do_keg debug"
-    SCRIPT_PATH = "."
-    DO_KEG = True
-    debug = True
+# if len(sys.argv) == 3:
+#     print(sys.argv)
+#     SCRIPT_PATH = os.path.dirname(sys.argv[0])
+#     DO_KEG = bool(int(sys.argv[1]))
+#     debug = bool(int(sys.argv[2]))
+# else:
+#     print "correct usage: script_path do_keg debug"
+SCRIPT_PATH = "."
+DO_KEG = True
+#     debug = True
 
-if DO_KEG:
-    print "keg!", sys.argv[1]
-    import classifySample as cs
-    import fingerprinter as fp
-else:
-    print "waterbottle.", sys.argv[1]
-    import wb_classifySample as cs
-    import wb_fingerprinter as fp
+# if DO_KEG:
+#     print "keg!", sys.argv[1]
+import classifySample as cs
+import fingerprinter as fp
+debug = False
+# else:
+#     print "waterbottle.", sys.argv[1]
+#     import wb_classifySample as cs
+#     import wb_fingerprinter as fp
 
-rawToFillLive(debug = debug)
+# rawToFillLive(debug = debug)
