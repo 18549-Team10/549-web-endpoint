@@ -87,7 +87,7 @@ def rawToFillTest(data, playFreq, sampleMagMult = 1, sampleMagAdd = 0, debug = F
 
     return fills
 
-def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = .23):
+def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1.3):
     fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
     fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
@@ -146,11 +146,12 @@ if len(sys.argv) == 3:
     SCRIPT_PATH = os.path.dirname(sys.argv[0])
     DO_KEG = bool(int(sys.argv[1]))
     debug = bool(int(sys.argv[2]))
-elif len(sys.argv) == 0:
+elif len(sys.argv) <= 1:
     DO_KEG = True
     debug = False
     SCRIPT_PATH = "."
 else:
+    print sys.argv
     print "correct usage: script_path do_keg debug"
     SCRIPT_PATH = "."
     DO_KEG = True
@@ -163,4 +164,4 @@ else:
     import wb_classifySample as cs
     import wb_fingerprinter as fp
 
-rawToFillLive(debug = debug)
+# rawToFillLive(debug = debug)

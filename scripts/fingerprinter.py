@@ -10,7 +10,7 @@ LOWPASS_FREQ  = 50000
 MIN_NUM_PEAKS = 2
 MAX_NUM_PEAKS = 3
 SAMPLING_RATE = 62500 # 62.5 kHz
-SAMPLE_SIZE = 8196
+SAMPLE_SIZE = 6500
 
 def readFile(path):
     with open(path, "rt") as f:
@@ -48,16 +48,18 @@ def condenseData(data, debug = False):
     for i in range(0,len(data),SAMPLE_SIZE):
         if i + SAMPLE_SIZE > len(data):
             continue # do not include, since not a complete sample
-        freqResponse = np.fft.fft(data[i:i + SAMPLE_SIZE])/n # [range(n/2)]
+        freqResponse = np.fft.fft(data[i:i + SAMPLE_SIZE]) # [range(n/2)]
         freqResponseCut = freqResponse[:len(freqResponse)/2]
         freqResponseCut[:int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2))] = [0 for i in range(int(1.0*HIGHPASS_FREQ/SAMPLING_RATE*(SAMPLE_SIZE/2)))] # this is mostly noise
         peaks = [(abs(freqResponseCut[i]), frq[i]) for i in range(len(freqResponseCut))]
-        # topPeaks = sorted([(f,m) for (m,f) in sorted(peaks)[SAMPLE_SIZE/2 - SAMPLE_SIZE/500:]])
+        topPeaks = sorted([(f,m) for (m,f) in sorted(peaks)[len(peaks) - 3:]])
+        return topPeaks
+        print "topPeaks:", topPeaks
         allPeaks.extend(peaks)
     # allPeaks = sorted([(f,m) for (m,f) in sorted(allPeaks)[len(allPeaks) - 1 - NUM_PEAKS:]])
     # allPeaks.sort()
 
-    return avg([m for (m,f) in allPeaks])
+    # return avg([m for (m,f) in allPeaks])
 
     allPeaks = sorted([(f,m) for (m,f) in allPeaks])
     lowpassIndex = 0
@@ -124,25 +126,33 @@ def condenseData(data, debug = False):
     return sorted(output)
 
 def convertToDict(folderName, debug = False):
-    data = []
+    folderDict = dict()
     for file in os.listdir(folderName):
+        print "file", file
+        data = []
         dataString = readFile(folderName + os.sep + file)
         for row in dataString.splitlines():
             if row.isdigit():
                 data.append(float(((int(row) >> 2) & 0xFFF)) * 1.4 / 4096)
-    return condenseData(data, debug)
+        folderDict[file] = condenseData(data, debug)
+    return folderDict
 
 def writeFingerprints(trainingData, path):
-    # stringToWrite = "\n".join([key + "," + ",".join([str(freq) + "," + str(mag) for (freq,mag) in val]) for (key,val) in trainingData.items()])
-    stringToWrite = "\n".join([key + "," + str(value) for (key, value) in trainingData.items()])
-    writeFile(path, stringToWrite)
+    stringToWrite = ""
+    for fill in trainingData:
+        for file in trainingData[fill]:
+            stringToWrite += ",".join([fill,file] + [",".join([str(f),str(m)]) for (f,m) in trainingData[fill][file]]) +"\n"
+    writeFile(path, stringToWrite.strip())
 
 def readFingerprints(path):
     rawString = readFile(path)
     fingerprints = dict()
     for line in rawString.splitlines():
         line = line.split(",")
-        fingerprints[line[0]] = float(line[1])
+        fill = line[0]
+        file = line[1]
+        if fill not in fingerprints: fingerprints[fill] = dict()
+        fingerprints[fill][file] = [(float(line[i]), float(line[i+1])) for i in range(2, len(line), 2)]
     return fingerprints
 
 def fingerprint(fillLevelNames, path, debug = False):

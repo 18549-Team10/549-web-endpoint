@@ -10,7 +10,7 @@ def frange(start, stop, step):
         i += step
     return out
 
-def testRatios(numTrials = 100):
+def testRatios(numTrials = 100): # 1.3 best when sample size == 8192
     tested = set()
     bestRatio, bestScore, allRatios = None, None, []
     # for ratio in frange(.001,2,.001):
@@ -18,7 +18,7 @@ def testRatios(numTrials = 100):
     #     allRatios.append(score)
     #     if bestScore == None or score > bestScore:
     #         bestRatio, bestScore = ratio, score
-    for ratio in frange(0.8,0.25, 0.01):
+    for ratio in frange(0, 2, 0.1):
         score = test.test(numTrials,ratio = ratio)
         allRatios.append(score)
         if bestScore == None or score > bestScore:

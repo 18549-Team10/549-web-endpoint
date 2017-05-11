@@ -17,13 +17,10 @@ def bestMatch(freq, mag, peaks, debug = False):
         freqDist = abs(mapFreq - freq)
         magDist = abs(mapMag - mag)
         dist = math.sqrt(pow(freqDist, 2) + pow(magDist, 2))
-        if debug: print("MapFreq = " + str(mapFreq) + "|| MapMag = " + str(mapMag))
-        if debug: print("Dist = " + str(dist))
         if firstIteration or dist < minDist:
             minDist = dist
             bestFreq, bestMag = mapFreq, mapMag
             firstIteration = False
-        if debug: print("Best Freq = " + str(bestFreq) + "|| Best Mag = " + str(bestMag))
     return bestFreq, bestMag
 
 def score(samplePeaks, mapPeaks, ratio, debug = False):
@@ -33,8 +30,6 @@ def score(samplePeaks, mapPeaks, ratio, debug = False):
     # the options array when you've made a match
     peakScores = []
     for (freq,mag) in samplePeaks:
-        if debug: print("----------------------------------------")
-        if debug: print("Trying a new frequency and mag from my sample...")
         matchFreq,matchMag = bestMatch(freq,mag, mapPeaks, debug)
         freqDiff = abs(freq - matchFreq)
         magDiff = abs(mag - matchMag)
@@ -56,8 +51,19 @@ def bestMatchJustFreq(freq, mag, peaks, debug = False):
             bestFreq, bestMag = pFreq, pMag
     return bestFreq, bestMag
 
-def score(sampleMag, mapMag, ratio = 1, debug = False):
-    return abs(sampleMag*ratio - mapMag)
+def score(samplePeaks, mapPeaks, ratio = 1, debug = False):
+    # todo: revert to matching peaks and scoring on each peak
+    # if debug: print sampleMag, mapMag
+    # return abs(sampleMag*ratio - mapMag)
+    peakScores = []
+    for (freq,mag) in samplePeaks:
+        matchFreq,matchMag = bestMatch(freq,mag, mapPeaks, debug)
+        freqDiff = abs(freq - matchFreq)
+        magDiff = abs(ratio*mag - matchMag)
+        if debug: print freqDiff, magDiff
+        peakScores.append(magDiff)
+    # peakScores.pop(peakScores.index(max(peakScores)))
+    return sum(peakScores) / len(peakScores)
 
 def classify(sampleMag, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, ratio = .23, debug = False, halfDiff = 7500):
     # samplePeaks = map(lambda (f,m) : (f,m*sampleMagMult + sampleMagAdd), samplePeaks)
