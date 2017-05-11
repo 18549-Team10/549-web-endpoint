@@ -82,7 +82,7 @@ def writeFingerprints(trainingData, path):
 #         fingerprints[fill][file] = [(line[i], line[i+1]) for i in range(0, len(line), 2)]
 #     return fingerprints
 
-def fingerprint(fillLevelNames, path, debug = False):
+def artur_fingerprint(fillLevelNames, path, debug = False):
     print "fingerprinting.."
     trainingData = []
     for location in os.listdir("../big_data/"):
