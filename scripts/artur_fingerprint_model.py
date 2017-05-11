@@ -91,4 +91,4 @@ def artur_fingerprint(fillLevelNames, path, debug = False):
     print trainingData
     writeFingerprints(trainingData, path)
 
-artur_fingerprint(['EMPTY', 'QUARTER', 'HALF', 'THREE_Q', 'FULL'], "../fingerprintData/artur_fingerprints.csv")
+artur_fingerprint(['EMPTY', 'QUARTER', 'HALF', 'THREE_Q', 'FULL', 'UNKNOWN'], "../fingerprintData/artur_fingerprints.csv")

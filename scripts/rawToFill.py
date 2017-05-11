@@ -137,7 +137,7 @@ else:
     debug = True
 
 if DO_KEG:
-    print "keg!", sys.argv[1]
+#    print "keg!", sys.argv[1]
     import classifySample as cs
     import fingerprinter as fp
 else:
