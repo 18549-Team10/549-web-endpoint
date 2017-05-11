@@ -31,10 +31,14 @@ def formatTrainingData():
 		fillLevelData.append(fillLevel)
 	return [formattedTrainingData, fillLevelData]
 
-def classifyNearestNeighbor(numTrials = 100):
-	[formattedTrainingData, fillLevelData] = formatTrainingData()
-	neigh = KNeighborsClassifier(n_neighbors=1)
+def classifyNearestNeighbor(formattedTrainingData, fillLevelData, neighbors):
+	neigh = KNeighborsClassifier(n_neighbors=neighbors)
 	neigh.fit(formattedTrainingData, fillLevelData)
+	return neigh
+
+def testClassifyNearestNeighbor(numTrials = 100, neighbors = 1):
+	[formattedTrainingData, fillLevelData] = formatTrainingData()
+	neigh = classifyNearestNeighbor(formattedTrainingData, fillLevelData, neighbors)
 	count = 0
 	for trial in range(numTrials):
 		randIndex = random.randint(0, len(formattedTrainingData)-1)
@@ -44,9 +48,9 @@ def classifyNearestNeighbor(numTrials = 100):
 		#print(sampleToTest)
 		#print(neigh.predict([sampleToTest]))
 		predictedLevel = neigh.predict([sampleToTest])
-		print(predictedLevel[0])
+		print("Predicted Level = " + str(predictedLevel[0]))
 		if (str(predictedLevel[0]) == str(correctLevel)):
-			print "yay!"
+			#print "yay!"
 			count += 1
 		print("\n")
-	print ("Count = " + str(count))
+	print("Percent Accuracy = " + str(float(count/numTrials) * 100))
