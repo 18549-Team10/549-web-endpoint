@@ -75,7 +75,7 @@ def getDataAndVisualize(dataDir = "../data/", graphDir = "../graphs"):
     print("visualizing in " + graphDir)
     if not os.path.isdir(graphDir):
         os.mkdir(graphDir)
-    # visualizeTimeOrderedData(data, dataLabels, graphDir)
+    visualizeTimeOrderedData(data, dataLabels, graphDir)
     visualizeFreq(data, dataLabels, graphDir)
     print("done!")
 
@@ -146,5 +146,5 @@ if len(sys.argv) > 1:
 else:
     graphDir = "../graphs"
     scriptDir = "."
-#     # getDataAndVisualize()
-#     fingerprintVisualize()
+    getDataAndVisualize()
+    fingerprintVisualize()

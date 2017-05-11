@@ -11,6 +11,7 @@ def getDataAndVisualize(dataDir = "../data", graphDir = "../graphs"):
     dataFiles = []
     if os.path.isdir(dataDir):
         dataFiles.extend(os.listdir(dataDir))
+    dataFiles = sorted(dataFiles)
     print(dataFiles)
     dataLabels = []
     data = []
@@ -25,11 +26,8 @@ def getDataAndVisualize(dataDir = "../data", graphDir = "../graphs"):
                 with open(dataDir + os.path.sep + fname) as myfile:
                     nextHead = myfile.read().splitlines()
             voltageData = map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, nextHead)
-            print "fname: " + str(voltageData[:10])
+            print fname[-5:] + ":\n" + str(voltageData[:10])
 
-    print("visualizing in " + graphDir)
-    if not os.path.isdir(graphDir):
-        os.mkdir(graphDir)
 
     print("done!")
 
