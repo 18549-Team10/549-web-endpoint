@@ -40,9 +40,10 @@ def weightedAvg(l):
     return sum(map(lambda (x,y) : x*y, l)) / totalWeight
 
 def condenseData(data, debug = False):
+    print "condensingData!"
     n = len(data)
 #    SAMPLE_SIZE = n
-    if debug: print "n", n
+    print "n", n
     frq = [1.0 * i * SAMPLING_RATE / (SAMPLE_SIZE/2) for i in range(SAMPLE_SIZE/2)]
     allPeaks = []
     for i in range(0,len(data),SAMPLE_SIZE):
