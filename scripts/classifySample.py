@@ -63,6 +63,7 @@ def score(samplePeaks, mapPeaks, ratio = 1, debug = False):
         if debug: print freqDiff, magDiff
         peakScores.append(magDiff)
     # peakScores.pop(peakScores.index(max(peakScores)))
+    if len(peakScores) == 0: return 0
     return sum(peakScores) / len(peakScores)
 
 def classify(sampleMag, trainingDataMap, sampleMagMult = 1, sampleMagAdd = 0, ratio = .23, debug = False, halfDiff = 7500):
