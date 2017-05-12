@@ -41,7 +41,7 @@ def weightedAvg(l):
 
 def condenseData(data, debug = False):
     n = len(data)
-    SAMPLE_SIZE = n
+#    SAMPLE_SIZE = n
     if debug: print "n", n
     frq = [1.0 * i * SAMPLING_RATE / (SAMPLE_SIZE/2) for i in range(SAMPLE_SIZE/2)]
     allPeaks = []
@@ -74,7 +74,7 @@ def condenseData(data, debug = False):
     cutoffI = 0
     while cutoffI < len(allPeaks) and allPeaks[cutoffI][0] < cutoffMag:
         cutoffI += 1
-    if cutoffI >= len(allPeaks) - MIN_NUM_PEAKS + 1: cutoffI = len(allPeaks) - MIN_NUM_PEAKS # must have at least min num peaks many peaks 
+    if cutoffI >= len(allPeaks) - MIN_NUM_PEAKS + 1: cutoffI = len(allPeaks) - MIN_NUM_PEAKS # must have at least min num peaks many peaks
     allPeaks = sorted([(f,m) for (m,f) in allPeaks[cutoffI:]])
     if debug:
         plt.clf()
