@@ -164,4 +164,4 @@ else:
     import wb_classifySample as cs
     import wb_fingerprinter as fp
 
-# rawToFillLive(debug = debug)
+rawToFillLive(debug = debug)
