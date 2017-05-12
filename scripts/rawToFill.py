@@ -87,7 +87,7 @@ def rawToFillTest(data, playFreq, sampleMagMult = 1, sampleMagAdd = 0, debug = F
 
     return fills
 
-def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1.3):
+def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1):
     fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
     fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
