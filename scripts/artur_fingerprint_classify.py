@@ -69,16 +69,15 @@ def writeFingerprints(trainingData, path):
     #         stringToWrite += ",".join([fill,file] + [",".join([str(f),str(m)]) for (f,m) in trainingData[fill][file]]) +"\n"
     writeFile(path, stringToWrite)
 
-# def readFingerprints(path):
-#     rawString = readFile(path)
-#     fingerprints = dict()
-#     for line in rawString.splitlines():
-#         line = line.split(",")
-#         fill = line[0]
-#         file = line[1]
-#         if fill not in fingerprints: fingerprints[fill] = dict()
-#         fingerprints[fill][file] = [(line[i], line[i+1]) for i in range(0, len(line), 2)]
-#     return fingerprints
+def readFingerprints(path):
+    rawString = readFile(path)
+    fingerprints = []
+    for line in rawString.splitlines():
+        if len(line) == 0: continue
+        fill, file = line[0], line[1]
+        data = [float(x) for x in line[2:]]
+        fingerprints.append([fill,file] + data)
+    return fingerprints
 
 def artur_fingerprint(fillLevelNames, path, debug = False):
     print "fingerprinting.."
