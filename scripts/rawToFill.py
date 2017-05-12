@@ -45,7 +45,7 @@ def writeToFrontEndTime(percentage, time, debug = False):
     prevData = readFile(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH).splitlines() if os.path.exists(SCRIPT_PATH + os.sep + FRONT_END_JSON_TIME_PATH) else []
     if prevData == []: prevData = ["",""] # happens when file does not exist or is empty
     # if debug: print "prev data", prevData
-    timeValues = [float(x) for x in prevData[0].split(",") if x != ''] + [time.minute + time.second * 1.0/60]
+    timeValues = [float(x) for x in prevData[0].split(",") if x != ''] + [time.hour + time.minute*1.0/60 + time.second * 1.0/60/60]
     fillLevels = [int(x) for x in prevData[1].split(",") if x != ''] + [percentage]
     contentsToWrite = ",".join([str(x) for x in timeValues]) + "\n" + ",".join([str(x) for x in fillLevels])
     # if debug: print contentsToWrite
