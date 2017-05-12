@@ -23,21 +23,21 @@ def bestMatch(freq, mag, peaks, debug = False):
             firstIteration = False
     return bestFreq, bestMag
 
-def score(samplePeaks, mapPeaks, ratio, debug = False):
-    # currently, only adds to score based on closeness of frequencies, but can
-    # be modified to score based on similarity of magnitude as wells
-    # TODO: Make this recursive, find the best match and make that pairing. Take them out of 
-    # the options array when you've made a match
-    peakScores = []
-    for (freq,mag) in samplePeaks:
-        matchFreq,matchMag = bestMatch(freq,mag, mapPeaks, debug)
-        freqDiff = abs(freq - matchFreq)
-        magDiff = abs(mag - matchMag)
-        magDiff *= ratio
-        if debug: print freqDiff, magDiff
-        peakScores.append(math.sqrt(magDiff**2 + freqDiff**2))
-    peakScores.pop(peakScores.index(max(peakScores)))
-    return sum(peakScores) / len(peakScores)
+# def score(samplePeaks, mapPeaks, ratio, debug = False):
+#     # currently, only adds to score based on closeness of frequencies, but can
+#     # be modified to score based on similarity of magnitude as wells
+#     # TODO: Make this recursive, find the best match and make that pairing. Take them out of 
+#     # the options array when you've made a match
+#     peakScores = []
+#     for (freq,mag) in samplePeaks:
+#         matchFreq,matchMag = bestMatch(freq,mag, mapPeaks, debug)
+#         freqDiff = abs(freq - matchFreq)
+#         magDiff = abs(mag - matchMag)
+#         magDiff *= ratio
+#         if debug: print freqDiff, magDiff
+#         peakScores.append(math.sqrt(magDiff**2 + freqDiff**2))
+#     peakScores.pop(peakScores.index(max(peakScores)))
+#     return sum(peakScores) / len(peakScores)
 
 def bestMatchJustFreq(freq, mag, peaks, debug = False):
     minDist = None
