@@ -22,6 +22,7 @@ const lastFrequency = 31000;
 const firstChunk = 0;
 const firstFrequency = 10000;
 var iterationsSeen = 0;
+const totalIterations = 1;
 const fillLevels = ["ERROR", "EMPTY", "QUARTER", "HALF", "THREE_Q", "FULL", "UNKNOWN"];
 
 var options = {
@@ -90,7 +91,7 @@ server.on('message', (msg, rinfo) => {
     if(chunk == lastChunk && frequency == lastFrequency && fillLevel == "UNKNOWN"){
       iterationsSeen+=1;
       console.log("Last chunk %d of 8", iterationsSeen);
-      if(iterationsSeen == 8){
+      if(iterationsSeen == totalIterations){
         iterationsSeen = 0;
         PythonShell.run('rawToFill.py', options,
                         (err,results) => processPythonRun(fillLevel, err, results));
