@@ -41,7 +41,7 @@ def weightedAvg(l):
 
 def condenseData(data, debug = False):
     n = len(data)
-    # SAMPLE_SIZE = n
+    SAMPLE_SIZE = n
     if debug: print "n", n
     frq = [1.0 * i * SAMPLING_RATE / (SAMPLE_SIZE/2) for i in range(SAMPLE_SIZE/2)]
     allPeaks = []
@@ -68,7 +68,7 @@ def condenseData(data, debug = False):
     allPeaks = allPeaks[:lowpassIndex]
 
     # peaks = copy.copy(allPeaks)
-
+    if len(allPeaks) == 0: return []
     allPeaks = sorted([(m,f) for (f,m) in allPeaks])
     cutoffMag = allPeaks[len(allPeaks) - 1][0] *.60
     cutoffI = 0
