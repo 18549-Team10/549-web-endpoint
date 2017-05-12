@@ -10,7 +10,7 @@ LOWPASS_FREQ  = 50000
 MIN_NUM_PEAKS = 2
 MAX_NUM_PEAKS = 3
 SAMPLING_RATE = 62500 # 62.5 kHz
-SAMPLE_SIZE = 8192
+SAMPLE_SIZE = 6500
 
 def readFile(path):
     with open(path, "rt") as f:
