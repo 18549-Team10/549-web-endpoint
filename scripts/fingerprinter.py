@@ -40,6 +40,7 @@ def weightedAvg(l):
     return sum(map(lambda (x,y) : x*y, l)) / totalWeight
 
 def condenseData(data, debug = False):
+    print "condensingData!"
     n = len(data)
     SAMPLE_SIZE = n
     print "n", n
