@@ -80,14 +80,14 @@ def rawToFillTest(data, playFreq, sampleMagMult = 1, sampleMagAdd = 0, debug = F
 
     peaks = []
     voltageData = map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, data)
-    fills = cs.classify(fp.condenseData(voltageData), 
+    fills = cs.classify(fp.condenseData(voltageData),
                 {fill : fingerprints[fill].get(playFreq, []) for fill in fingerprints},
                 sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
                 ratio = ratio, debug = debug)
 
     return fills
 
-def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1.3):
+def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1):
     fingerprintFilePath = "../fingerprintData/fingerprints.csv" if DO_KEG else "../fingerprintData/wb_fingerprints.csv"
     fingerprintPath = SCRIPT_PATH + os.sep + fingerprintFilePath
     if not os.path.exists(fingerprintPath):
@@ -115,7 +115,7 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1.
             if filename == FROZEN_DATA_FILE_NAME: continue
             fileData = readFile(SCRIPT_PATH + os.sep + UNKNOWN_DATA_PATH + os.sep + filename).splitlines()
             data = (map(lambda x : float(((int(x) >> 2) & 0xFFF)) * 1.4 / 4096, fileData))
-            matchFills = cs.classify(fp.condenseData(data), 
+            matchFills = cs.classify(fp.condenseData(data),
                 {fill : fingerprints[fill].get(filename, []) for fill in fingerprints},
                 sampleMagMult = sampleMagMult, sampleMagAdd = sampleMagAdd,
                 ratio = ratio, debug = debug)
@@ -131,7 +131,7 @@ def rawToFillLive(sampleMagMult = 1, sampleMagAdd = 0, debug = False, ratio = 1.
 
         percent = avg([FILL_PERCENTAGES.get(fill, 0) for fill in bestFill])
         writeToFrontEnd(percent)
-        writeToFrontEndTime(percent, datetime.datetime.now(), debug)
+        # writeToFrontEndTime(percent, datetime.datetime.now(), debug)
     # we clear the files so that the cc3200 can keep appending to them,
     # rather than needing to overwrite them
     clearUnknownDataFiles(debug)
